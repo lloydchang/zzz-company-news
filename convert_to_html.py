@@ -131,10 +131,10 @@ html_content = """<!DOCTYPE html>
         /* Chatbot styles */
         .chatbot-container {
             position: fixed;
-            bottom: 20px;
+            top: 20px; /* Changed from bottom to top */
             right: 20px;
             width: 350px;
-            height: 450px;
+            height: calc(100vh - 40px); /* Changed to take up almost full viewport height */
             background-color: white;
             border-radius: 10px;
             box-shadow: 0 5px 25px rgba(0,0,0,0.2);
@@ -142,12 +142,13 @@ html_content = """<!DOCTYPE html>
             flex-direction: column;
             z-index: 1000;
             transition: transform 0.3s ease, opacity 0.3s ease;
-            transform: translateY(100%);
+            transform: translateX(110%); /* Changed from translateY to translateX */
             opacity: 0;
+            overflow: hidden; /* Added to ensure no overflow */
         }
         
         .chatbot-container.active {
-            transform: translateY(0);
+            transform: translateX(0); /* Changed from translateY to translateX */
             opacity: 1;
         }
         
@@ -172,6 +173,7 @@ html_content = """<!DOCTYPE html>
             overflow-y: auto;
             display: flex;
             flex-direction: column;
+            max-height: calc(100vh - 140px); /* Added to ensure scrolling works properly */
         }
         
         .message {
@@ -227,15 +229,15 @@ html_content = """<!DOCTYPE html>
             color: white;
             border: none;
             border-radius: 50%;
-            display: flex;
+            display: none; /* Changed from flex to none to hide initially */
             justify-content: center;
             align-items: center;
             font-size: 24px;
             cursor: pointer;
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
             z-index: 1001;
-            opacity: 1; /* Ensure the button is visible */
-            visibility: visible; /* Make sure visibility property isn't hidden */
+            opacity: 1;
+            visibility: visible;
         }
         
         /* Adding a pulsing animation to make the chat button more noticeable */
@@ -434,15 +436,25 @@ html_content += f"""
             const sendButton = document.querySelector('.chatbot-input button');
             const messagesContainer = document.querySelector('.chatbot-messages');
             
+            // Automatically open the chatbot on page load
+            setTimeout(() => {{
+                chatContainer.classList.add('active');
+                chatToggle.style.display = 'none';
+                chatInput.focus(); // Focus on the input field
+            }}, 1000); // Short delay to ensure page has loaded
+            
             // Toggle chat open/close
             chatToggle.addEventListener('click', () => {{
                 chatContainer.classList.add('active');
                 chatToggle.style.display = 'none';
+                chatInput.focus();
             }});
             
             closeChat.addEventListener('click', () => {{
                 chatContainer.classList.remove('active');
-                chatToggle.style.display = 'flex';
+                setTimeout(() => {{
+                    chatToggle.style.display = 'flex'; // Show toggle button after transition
+                }}, 300);
             }});
             
             // Send message function
