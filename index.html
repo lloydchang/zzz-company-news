@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company News Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+        .news-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 20px;
+            transition: transform 0.2s ease;
+        }
+        .news-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .news-title {
+            font-size: 18px;
+            margin-top: 0;
+        }
+        .news-source {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        .company-tag {
+            display: inline-block;
+            background-color: #e0f7fa;
+            color: #006064;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .news-date {
+            color: #888;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+        .timestamp {
+            text-align: center;
+            color: #999;
+            font-size: 12px;
+            margin-top: 40px;
+        }
+        a {
+            color: #0066cc;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Company News Dashboard</h1>
+    </div>
+    
+    <div class="news-grid">
+
+    <div class="news-card">
+        <span class="company-tag">Unknown</span>
+        <h3 class="news-title"><a href="https://www.foxnews.com/media/elon-musk-congratulates-spacex-nasa-excellent-work-rescuing-stranded-astronauts" target="_blank">Elon Musk congratulates SpaceX, NASA for &#x27;excellent work&#x27; rescuing stranded astronauts</a></h3>
+        <div class="news-source">Fox News</div>
+        <p>No description available</p>
+        <div class="news-date">2025-03-19T02:14:00+00:00</div>
+    </div>
+    
+    <div class="news-card">
+        <span class="company-tag">Unknown</span>
+        <h3 class="news-title"><a href="url" target="_blank">title</a></h3>
+        <div class="news-source">source</div>
+        <p>No description available</p>
+        <div class="news-date">date</div>
+    </div>
+    
+    <div class="news-card">
+        <span class="company-tag">Unknown</span>
+        <h3 class="news-title"><a href="https://www.msn.com/en-us/money/other/why-oracle-could-be-key-to-a-tiktok-deal/ar-AA1BbWvh" target="_blank">Why Oracle Could Be Key to a TikTok Deal</a></h3>
+        <div class="news-source">Bloomberg</div>
+        <p>No description available</p>
+        <div class="news-date">2025-03-18T22:37:14+00:00</div>
+    </div>
+    
+    <div class="news-card">
+        <span class="company-tag">Unknown</span>
+        <h3 class="news-title"><a href="url" target="_blank">title</a></h3>
+        <div class="news-source">source</div>
+        <p>No description available</p>
+        <div class="news-date">date</div>
+    </div>
+    
+    <div class="news-card">
+        <span class="company-tag">Unknown</span>
+        <h3 class="news-title"><a href="https://www.indiewire.com/news/business/ai-open-letter-openai-google-copyright-exemptions-1235104394/" target="_blank">An Army of A-Listers Are Challenging OpenAI and Google Over Copyright Exemptions for Training AI Models</a></h3>
+        <div class="news-source">IndieWire</div>
+        <p>No description available</p>
+        <div class="news-date">2025-03-19T00:58:00+00:00</div>
+    </div>
+    
+    <div class="news-card">
+        <span class="company-tag">Unknown</span>
+        <h3 class="news-title"><a href="url" target="_blank">title</a></h3>
+        <div class="news-source">source</div>
+        <p>No description available</p>
+        <div class="news-date">date</div>
+    </div>
+    
+    <div class="news-card">
+        <span class="company-tag">Unknown</span>
+        <h3 class="news-title"><a href="https://techcrunch.com/2025/02/27/stripe-finalizes-tender-sale-at-a-91-5b-valuation-says-payment-volumes-grew-to-1-4t-in-2024/" target="_blank">Stripe finalizes tender sale at a $91.5B valuation, says payment volumes grew to $1.4T in 2024</a></h3>
+        <div class="news-source">TechCrunch</div>
+        <p>No description available</p>
+        <div class="news-date">2025-02-27T14:39:00+00:00</div>
+    </div>
+    
+    <div class="news-card">
+        <span class="company-tag">Unknown</span>
+        <h3 class="news-title"><a href="url" target="_blank">title</a></h3>
+        <div class="news-source">source</div>
+        <p>No description available</p>
+        <div class="news-date">date</div>
+    </div>
+    
+    <div class="news-card">
+        <span class="company-tag">Unknown</span>
+        <h3 class="news-title"><a href="https://www.yahoo.com/lifestyle/coach-owner-tapestry-files-trademark-194143470.html" target="_blank">Coach&#x27;s Owner Tapestry Files Trademark Infringement Suit Against Shein</a></h3>
+        <div class="news-source">Yahoo</div>
+        <p>No description available</p>
+        <div class="news-date">2025-03-18T19:41:00+00:00</div>
+    </div>
+    
+    <div class="news-card">
+        <span class="company-tag">Unknown</span>
+        <h3 class="news-title"><a href="url" target="_blank">title</a></h3>
+        <div class="news-source">source</div>
+        <p>No description available</p>
+        <div class="news-date">date</div>
+    </div>
+    
+    <div class="news-card">
+        <span class="company-tag">Unknown</span>
+        <h3 class="news-title"><a href="https://markets.businessinsider.com/news/stocks/palantir-partners-with-databricks-in-a-move-that-shakes-the-ai-industry-1034490156" target="_blank">Palantir Partners with Databricks in a Move That Shakes the AI Industry</a></h3>
+        <div class="news-source">Markets Insider</div>
+        <p>No description available</p>
+        <div class="news-date">2025-03-18T14:30:00+00:00</div>
+    </div>
+    
+    <div class="news-card">
+        <span class="company-tag">Unknown</span>
+        <h3 class="news-title"><a href="url" target="_blank">title</a></h3>
+        <div class="news-source">source</div>
+        <p>No description available</p>
+        <div class="news-date">date</div>
+    </div>
+    
+    <div class="news-card">
+        <span class="company-tag">Unknown</span>
+        <h3 class="news-title"><a href="https://www.msn.com/en-us/money/other/anthropic-s-ceo-says-that-in-3-to-6-months-ai-will-be-writing-90-of-the-code-software-developers-were-in-charge-of/ar-AA1ATT86" target="_blank">Anthropic&#x27;s CEO says that in 3 to 6 months, AI will be writing 90% of the code software developers were in charge of</a></h3>
+        <div class="news-source">Insider</div>
+        <p>No description available</p>
+        <div class="news-date">2025-03-14T06:27:16+00:00</div>
+    </div>
+    
+    <div class="news-card">
+        <span class="company-tag">Unknown</span>
+        <h3 class="news-title"><a href="url" target="_blank">title</a></h3>
+        <div class="news-source">source</div>
+        <p>No description available</p>
+        <div class="news-date">date</div>
+    </div>
+    
+    <div class="news-card">
+        <span class="company-tag">Unknown</span>
+        <h3 class="news-title"><a href="https://www.msn.com/en-us/news/technology/xai-acquires-hotshot-a-game-changer-in-ai-video-generation/ar-AA1BbYeL" target="_blank">xAI Acquires Hotshot: A Game-Changer in AI Video Generation</a></h3>
+        <div class="news-source">Gadget Review</div>
+        <p>No description available</p>
+        <div class="news-date">2025-03-18T23:00:00+00:00</div>
+    </div>
+    
+    <div class="news-card">
+        <span class="company-tag">Unknown</span>
+        <h3 class="news-title"><a href="url" target="_blank">title</a></h3>
+        <div class="news-source">source</div>
+        <p>No description available</p>
+        <div class="news-date">date</div>
+    </div>
+    
+    <div class="news-card">
+        <span class="company-tag">Unknown</span>
+        <h3 class="news-title"><a href="https://www.msn.com/en-us/money/other/revolut-sees-u-k-banking-license-paving-way-for-potential-ipo-expansion/ar-AA1B9Naj" target="_blank">Revolut Sees U.K. Banking License Paving Way for Potential IPO, Expansion</a></h3>
+        <div class="news-source">The Wall Street Journal</div>
+        <p>No description available</p>
+        <div class="news-date">2025-03-18T12:21:00+00:00</div>
+    </div>
+    
+    <div class="news-card">
+        <span class="company-tag">Unknown</span>
+        <h3 class="news-title"><a href="url" target="_blank">title</a></h3>
+        <div class="news-source">source</div>
+        <p>No description available</p>
+        <div class="news-date">date</div>
+    </div>
+    
+    <div class="news-card">
+        <span class="company-tag">Unknown</span>
+        <h3 class="news-title"><a href="https://www.msn.com/en-us/general/general/how-to-use-canva-ai-to-create-business-cards/ar-AA1B595w" target="_blank">How to Use Canva AI to Create Business Cards</a></h3>
+        <div class="news-source">CNET</div>
+        <p>No description available</p>
+        <div class="news-date">2025-03-17T14:02:22+00:00</div>
+    </div>
+    
+    </div>
+    <p class="timestamp">Last updated: 2025-03-19 02:40:36</p>
+</body>
+</html>
