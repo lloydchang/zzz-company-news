@@ -1,0 +1,48 @@
+# File: .github/workflows/company-news.yml
+
+name: Company News
+
+on:
+  schedule:
+    - cron: '0 0 * * 3,5' # Runs Wednesday and Friday at midnight UTC
+  workflow_dispatch:
+
+# Add this permissions section
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        run: |
+          python -m venv venv
+          source ./venv/bin/activate
+          python -m pip install -U duckduckgo-search pandas
+
+      - name: Get company news
+        run: |
+          source ./venv/bin/activate
+          > aggregated-news.csv  # Initialize empty file
+          for company in "SpaceX" "ByteDance" "OpenAI" "Stripe" "SHEIN" "Databricks" "Anthropic" "xAI" "Revolut" "Canva"; do
+            ddgs news -k "$company" -m 1 -o "news-$company.csv"
+            cat "news-$company.csv" >> aggregated-news.csv
+          done
+      
+      - name: Convert CSV to HTML
+        run: |
+          source ./venv/bin/activate
+          python convert_to_html.py
+      
+      - name: Commit and push if changes
+        run: |
+          git config --local user.email "lloydchang@gmail.com"
+          git config --local user.name "lloydchang"
+          git add news-*.csv
+          git add aggregated-news.csv
+          git add index.html
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Update news dashboard" && git push)
