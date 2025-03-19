@@ -3,6 +3,10 @@ import html
 import datetime
 import os
 import json
+import requests
+from bs4 import BeautifulSoup
+import time
+import random
 
 # Read the CSV file
 news_items = []
@@ -276,17 +280,53 @@ for item in news_items:
     </div>
     """
 
-# Prepare news data for the chatbot
+# Function to fetch content from URLs
+def fetch_url_content(url):
+    try:
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        }
+        response = requests.get(url, headers=headers, timeout=10)
+        response.raise_for_status()  # Raise an exception for 4XX/5XX responses
+        
+        # Parse the HTML content
+        soup = BeautifulSoup(response.text, 'html.parser')
+        
+        # Remove script, style, and nav elements
+        for element in soup(['script', 'style', 'nav', 'header', 'footer', 'aside']):
+            element.decompose()
+            
+        # Get text and clean it up
+        text = soup.get_text(separator=' ', strip=True)
+        # Clean up white spaces
+        text = ' '.join(text.split())
+        return text
+    except Exception as e:
+        print(f"Error fetching content from {url}: {e}")
+        return ""
+
+# Prepare news data for the chatbot with URL content
 news_data_for_js = []
 for item in news_items:
-    news_data_for_js.append({
+    url = str(item.get("url", "#"))
+    article_data = {
         "company": str(item.get("company", "")),
         "title": str(item.get("title", "No title")),
-        "url": str(item.get("url", "#")),
+        "url": url,
         "source": str(item.get("source", "Unknown source")),
         "body": str(item.get("body", "No description available")),
-        "date": str(item.get("date", ""))
-    })
+        "date": str(item.get("date", "")),
+        "full_content": ""
+    }
+    
+    # Only fetch content if we have a real URL
+    if url and url != "#" and url.startswith("http"):
+        print(f"Fetching content from {url}")
+        article_data["full_content"] = fetch_url_content(url)
+        # Polite delay to avoid hammering websites
+        time.sleep(random.uniform(1, 3))
+    
+    news_data_for_js.append(article_data)
 
 # Complete the HTML document
 current_time = datetime.datetime.now(datetime.timezone.utc).isoformat()
@@ -378,7 +418,7 @@ html_content += f"""
                 messagesContainer.scrollTop = messagesContainer.scrollHeight;
             }}
             
-            // RAG implementation
+            // Enhanced RAG implementation with full content
             function processQuery(question) {{
                 // Convert question to lowercase for case-insensitive matching
                 const lowerQuestion = question.toLowerCase();
@@ -394,12 +434,22 @@ html_content += f"""
                     let score = 0;
                     const title = article.title.toLowerCase();
                     const body = article.body.toLowerCase();
+                    const fullContent = article.full_content ? article.full_content.toLowerCase() : '';
                     
-                    // Check if keywords are in title or body
+                    // Check if keywords are in title, body or full content
                     keywords.forEach(keyword => {{
-                        if (title.includes(keyword)) score += 3;  // Title matches are weighted higher
-                        if (body.includes(keyword)) score += 1;
+                        if (title.includes(keyword)) score += 5;  // Title matches are weighted highest
+                        if (body.includes(keyword)) score += 3;   // Summary matches are important
+                        if (fullContent && fullContent.includes(keyword)) score += 1;  // Full content matches
                     }});
+                    
+                    // For specific question types, check for entities in full content
+                    if ((lowerQuestion.includes('who') || lowerQuestion.includes('person')) && fullContent) {{
+                        // Simple entity detection (could be more sophisticated)
+                        const nameRegex = /([A-Z][a-z]+ [A-Z][a-z]+)/g;
+                        const names = fullContent.match(nameRegex);
+                        if (names && names.length > 0) score += 2;
+                    }}
                     
                     if (score > 0) {{
                         relevantArticles.push({{...article, score}});
@@ -414,10 +464,34 @@ html_content += f"""
                     const mostRelevant = relevantArticles[0];
                     let response;
                     
+                    // Extract the most relevant snippet from full content if available
+                    let informativeSnippet = '';
+                    if (mostRelevant.full_content) {{
+                        const fullContent = mostRelevant.full_content;
+                        
+                        // Find a paragraph containing at least one keyword
+                        const paragraphs = fullContent.split(/\\n+/).filter(p => p.length > 100);
+                        
+                        for (const paragraph of paragraphs) {{
+                            if (keywords.some(keyword => paragraph.toLowerCase().includes(keyword))) {{
+                                informativeSnippet = paragraph.substring(0, 250) + '...';
+                                break;
+                            }}
+                        }}
+                        
+                        // If no good paragraph found, just take the beginning
+                        if (!informativeSnippet && fullContent.length > 0) {{
+                            informativeSnippet = fullContent.substring(0, 250) + '...';
+                        }}
+                    }}
+                    
                     if (lowerQuestion.includes('what') && lowerQuestion.includes('company')) {{
                         response = `Based on the news, ${mostRelevant.company} has been mentioned in relation to: "${mostRelevant.title}"`;
                     }} else if (lowerQuestion.includes('latest') || lowerQuestion.includes('recent')) {{
                         response = `The latest news I found is: "${mostRelevant.title}". ${mostRelevant.body.substring(0, 150)}...`;
+                    }} else if (informativeSnippet) {{
+                        // Use the full content snippet for detailed answers
+                        response = `According to ${mostRelevant.source}: "${informativeSnippet}"`;
                     }} else {{
                         response = `I found this relevant information: "${mostRelevant.title}". ${mostRelevant.body.substring(0, 150)}...`;
                     }}
