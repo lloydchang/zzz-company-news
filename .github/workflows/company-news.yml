@@ -46,11 +46,15 @@ jobs:
           source ./venv/bin/activate
           python convert_to_html.py
       
-      - name: Commit and push if changes
+      - name: Add files to Git
         run: |
           git config --local user.email "lloydchang@gmail.com"
           git config --local user.name "lloydchang"
           git add news-*.csv
           git add aggregated-news.csv
           git add index.html
+          git add news_cache.json
+      
+      - name: Commit and push if changes
+        run: |
           git diff --quiet && git diff --staged --quiet || (git commit -m "Update news dashboard" && git push)
