@@ -28,9 +28,19 @@ jobs:
         run: |
           source ./venv/bin/activate
           > aggregated-news.csv  # Initialize empty file
-          for company in "SpaceX" "ByteDance" "OpenAI" "Stripe" "SHEIN" "Databricks" "Anthropic" "xAI" "Revolut" "Canva"; do
-            ddgs news -k "$company" -m 1 -o "news-$company.csv"
-            cat "news-$company.csv" >> aggregated-news.csv
+          
+          # Process first company to get headers
+          first_company="SpaceX"
+          ddgs news -k "$first_company" -m 1 -o "news-$first_company.csv"
+          cat "news-$first_company.csv" > aggregated-news.csv
+          
+          # Process remaining companies without headers
+          for company in "ByteDance" "OpenAI" "Stripe" "SHEIN" "Databricks" "Anthropic" "xAI" "Revolut" "Canva"; do
+            if [ "$company" != "$first_company" ]; then
+              ddgs news -k "$company" -m 1 -o "news-$company.csv"
+              # Skip the header row (first line) when appending
+              tail -n +2 "news-$company.csv" >> aggregated-news.csv
+            fi
           done
       
       - name: Convert CSV to HTML
