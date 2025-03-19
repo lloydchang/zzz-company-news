@@ -105,6 +105,23 @@ html_content = """<!DOCTYPE html>
             align-items: center;
             margin-bottom: 20px;
         }
+        /* Image thumbnail styles */
+        .news-image {
+            margin-bottom: 15px;
+            max-height: 180px;
+            overflow: hidden;
+            border-radius: 6px;
+        }
+        .news-image img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.3s ease;
+        }
+        .news-card:hover .news-image img {
+            transform: scale(1.05);
+        }
     </style>
 </head>
 <body>
@@ -130,13 +147,13 @@ for item in news_items:
     company_tag = f'<span class="company-tag">{company}</span>' if company else ''
     
     # Add image HTML if an image URL exists
-    image_html = f'<div class="news-image"><img src="{image}" alt="{title}"></div>' if image else ''
+    image_html = f'<div class="news-image"><img src="{image}" alt="{title}"></div>' if image and image != "None" else ''
     
     html_content += f"""
     <div class="news-card">
         {company_tag}
-        <h3 class="news-title"><a href="{url}" target="_blank">{title}</a></h3>
         {image_html}
+        <h3 class="news-title"><a href="{url}" target="_blank">{title}</a></h3>
         <div class="news-source">{source}</div>
         <p>{body}</p>
         <div class="news-date">{date}</div>
