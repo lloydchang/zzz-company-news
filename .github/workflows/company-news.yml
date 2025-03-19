@@ -23,7 +23,7 @@ jobs:
         run: |
           python -m venv venv
           source ./venv/bin/activate
-          python -m pip install -U duckduckgo-search pandas
+          python -m pip install -U duckduckgo-search pandas requests beautifulsoup4
 
       - name: Get company news
         run: |
