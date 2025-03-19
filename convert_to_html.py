@@ -2,6 +2,7 @@ import csv
 import html
 import datetime
 import os
+import json
 
 # Read the CSV file
 news_items = []
@@ -122,6 +123,121 @@ html_content = """<!DOCTYPE html>
         .news-card:hover .news-image img {
             transform: scale(1.05);
         }
+        
+        /* Chatbot styles */
+        .chatbot-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 350px;
+            height: 450px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            transform: translateY(100%);
+            opacity: 0;
+        }
+        
+        .chatbot-container.active {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        .chatbot-header {
+            background-color: #0066cc;
+            color: white;
+            padding: 15px;
+            border-radius: 10px 10px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .chatbot-title {
+            font-weight: bold;
+            margin: 0;
+        }
+        
+        .chatbot-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .message {
+            margin-bottom: 10px;
+            max-width: 80%;
+            padding: 10px 15px;
+            border-radius: 18px;
+            line-height: 1.4;
+        }
+        
+        .user-message {
+            align-self: flex-end;
+            background-color: #0066cc;
+            color: white;
+        }
+        
+        .bot-message {
+            align-self: flex-start;
+            background-color: #f1f1f1;
+        }
+        
+        .chatbot-input {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        .chatbot-input input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            outline: none;
+        }
+        
+        .chatbot-input button {
+            background-color: #0066cc;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 10px 15px;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+        
+        .chat-toggle-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background-color: #0066cc;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            z-index: 1001;
+        }
+        
+        .source-citation {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+            font-style: italic;
+        }
     </style>
 </head>
 <body>
@@ -160,11 +276,172 @@ for item in news_items:
     </div>
     """
 
+# Prepare news data for the chatbot
+news_data_for_js = []
+for item in news_items:
+    news_data_for_js.append({
+        "company": str(item.get("company", "")),
+        "title": str(item.get("title", "No title")),
+        "url": str(item.get("url", "#")),
+        "source": str(item.get("source", "Unknown source")),
+        "body": str(item.get("body", "No description available")),
+        "date": str(item.get("date", ""))
+    })
+
 # Complete the HTML document
 current_time = datetime.datetime.now(datetime.timezone.utc).isoformat()
 html_content += f"""
     </div>
     <p class="timestamp">Last updated: {current_time}</p>
+    
+    <!-- Chatbot UI -->
+    <button class="chat-toggle-button">💬</button>
+    <div class="chatbot-container">
+        <div class="chatbot-header">
+            <span class="chatbot-title">News Assistant</span>
+            <span class="close-chat" style="cursor: pointer;">✕</span>
+        </div>
+        <div class="chatbot-messages">
+            <div class="message bot-message">
+                Hi! I'm your news assistant. Ask me anything about the news articles on this page.
+            </div>
+        </div>
+        <div class="chatbot-input">
+            <input type="text" placeholder="Ask a question...">
+            <button>Send</button>
+        </div>
+    </div>
+    
+    <script>
+        // Store news data for the chatbot
+        const newsData = {json.dumps(news_data_for_js)};
+        
+        // Chatbot functionality
+        document.addEventListener('DOMContentLoaded', () => {{
+            const chatToggle = document.querySelector('.chat-toggle-button');
+            const chatContainer = document.querySelector('.chatbot-container');
+            const closeChat = document.querySelector('.close-chat');
+            const chatInput = document.querySelector('.chatbot-input input');
+            const sendButton = document.querySelector('.chatbot-input button');
+            const messagesContainer = document.querySelector('.chatbot-messages');
+            
+            // Toggle chat open/close
+            chatToggle.addEventListener('click', () => {{
+                chatContainer.classList.add('active');
+                chatToggle.style.display = 'none';
+            }});
+            
+            closeChat.addEventListener('click', () => {{
+                chatContainer.classList.remove('active');
+                chatToggle.style.display = 'flex';
+            }});
+            
+            // Send message function
+            function sendMessage() {{
+                const question = chatInput.value.trim();
+                if (!question) return;
+                
+                // Add user message to chat
+                addMessage(question, 'user');
+                chatInput.value = '';
+                
+                // Process the query and generate response (RAG)
+                processQuery(question);
+            }}
+            
+            // Add message to chat
+            function addMessage(text, sender) {{
+                const message = document.createElement('div');
+                message.classList.add('message');
+                message.classList.add(sender + '-message');
+                message.textContent = text;
+                messagesContainer.appendChild(message);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }}
+            
+            // Add message with citation
+            function addMessageWithCitation(text, citation) {{
+                const messageContainer = document.createElement('div');
+                
+                const message = document.createElement('div');
+                message.classList.add('message');
+                message.classList.add('bot-message');
+                message.textContent = text;
+                
+                const citationElement = document.createElement('div');
+                citationElement.classList.add('source-citation');
+                citationElement.textContent = 'Source: ' + citation;
+                
+                messageContainer.appendChild(message);
+                messageContainer.appendChild(citationElement);
+                messagesContainer.appendChild(messageContainer);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }}
+            
+            // RAG implementation
+            function processQuery(question) {{
+                // Convert question to lowercase for case-insensitive matching
+                const lowerQuestion = question.toLowerCase();
+                
+                // Simple keyword extraction (this could be more sophisticated)
+                const keywords = lowerQuestion.split(' ')
+                    .filter(word => word.length > 3)
+                    .map(word => word.replace(/[^a-zA-Z0-9]/g, ''));
+                
+                // Search for relevant articles
+                let relevantArticles = [];
+                newsData.forEach(article => {{
+                    let score = 0;
+                    const title = article.title.toLowerCase();
+                    const body = article.body.toLowerCase();
+                    
+                    // Check if keywords are in title or body
+                    keywords.forEach(keyword => {{
+                        if (title.includes(keyword)) score += 3;  // Title matches are weighted higher
+                        if (body.includes(keyword)) score += 1;
+                    }});
+                    
+                    if (score > 0) {{
+                        relevantArticles.push({{...article, score}});
+                    }}
+                }});
+                
+                // Sort by relevance
+                relevantArticles.sort((a, b) => b.score - a.score);
+                
+                // Generate response based on findings
+                if (relevantArticles.length > 0) {{
+                    const mostRelevant = relevantArticles[0];
+                    let response;
+                    
+                    if (lowerQuestion.includes('what') && lowerQuestion.includes('company')) {{
+                        response = `Based on the news, ${mostRelevant.company} has been mentioned in relation to: "${mostRelevant.title}"`;
+                    }} else if (lowerQuestion.includes('latest') || lowerQuestion.includes('recent')) {{
+                        response = `The latest news I found is: "${mostRelevant.title}". ${mostRelevant.body.substring(0, 150)}...`;
+                    }} else {{
+                        response = `I found this relevant information: "${mostRelevant.title}". ${mostRelevant.body.substring(0, 150)}...`;
+                    }}
+                    
+                    addMessageWithCitation(response, `${mostRelevant.source}, ${mostRelevant.date}`);
+                    
+                    // If there are more relevant articles, mention them
+                    if (relevantArticles.length > 1) {{
+                        setTimeout(() => {{
+                            addMessage(`I also found ${relevantArticles.length - 1} more articles that might be relevant. Would you like to know more about any specific topic?`, 'bot');
+                        }}, 1000);
+                    }}
+                }} else {{
+                    addMessage(`I couldn't find any information about that in the current news articles. Could you try asking something else?`, 'bot');
+                }}
+            }}
+            
+            // Event listeners for sending messages
+            sendButton.addEventListener('click', sendMessage);
+            chatInput.addEventListener('keypress', (e) => {{
+                if (e.key === 'Enter') sendMessage();
+            }});
+        }});
+    </script>
 </body>
 </html>
 """
