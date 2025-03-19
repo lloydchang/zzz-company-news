@@ -234,8 +234,25 @@ html_content = """<!DOCTYPE html>
             cursor: pointer;
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
             z-index: 1001;
+            opacity: 1; /* Ensure the button is visible */
+            visibility: visible; /* Make sure visibility property isn't hidden */
         }
         
+        /* Adding a pulsing animation to make the chat button more noticeable */
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+            50% { transform: scale(1.05); box-shadow: 0 8px 16px rgba(0,0,0,0.3); }
+            100% { transform: scale(1); box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+        }
+        
+        .chat-toggle-button {
+            animation: pulse 2s infinite;
+        }
+        
+        .chat-toggle-button:hover {
+            background-color: #0055bb;
+        }
+
         .source-citation {
             font-size: 12px;
             color: #666;
@@ -365,8 +382,8 @@ html_content += f"""
     </div>
     <p class="timestamp">Last updated: {current_time}</p>
     
-    <!-- Chatbot UI -->
-    <button class="chat-toggle-button">💬</button>
+    <!-- Chatbot UI - Added title attribute and more visible text -->
+    <button class="chat-toggle-button" title="Open Chat Assistant">💬</button>
     <div class="chatbot-container">
         <div class="chatbot-header">
             <span class="chatbot-title">News Assistant</span>
@@ -545,6 +562,15 @@ html_content += f"""
             chatInput.addEventListener('keypress', (e) => {{
                 if (e.key === 'Enter') sendMessage();
             }});
+            
+            // Make sure chat toggle is visible on page load
+            chatToggle.style.display = 'flex';
+            chatToggle.style.opacity = '1';
+            
+            // Add a timeout to make the chatbot button pulse after a short delay
+            setTimeout(() => {{
+                chatToggle.classList.add('attention');
+            }}, 2000);
         }});
     </script>
 </body>
