@@ -31,25 +31,6 @@ for csv_file in os.listdir():
         except Exception as e:
             print(f"Error reading {csv_file}: {e}")
 
-# Check if ByteDance news is being found
-bytedance_count = 0
-for item in news_items:
-    if item.get("company", "").lower() == "bytedance" or (
-            item.get("title", "") in company_mapping and 
-            company_mapping[item.get("title", "")].lower() == "bytedance"):
-        bytedance_count += 1
-        print(f"Found ByteDance news: {item.get('title')}")
-
-print(f"Total ByteDance news items found: {bytedance_count}")
-
-# Now apply company mapping to ensure all news items have a company if it's in the mapping
-# This ensures news items are properly tagged with their company
-for item in news_items:
-    if item.get("title", "") in company_mapping:
-        if not item.get("company") or item.get("company") == "":
-            item["company"] = company_mapping[item.get("title", "")]
-            print(f"Assigned company {item['company']} to: {item['title']}")
-
 # Generate HTML content
 html_content = """<!DOCTYPE html>
 <html lang="en">
@@ -307,10 +288,6 @@ for item in news_items:
     # Add image HTML if an image URL exists
     image_html = f'<div class="news-image"><img src="{image}" alt="{title}"></div>' if image and image != "None" else ''
     
-    # Special handling for ByteDance to ensure it's displayed properly
-    if company.lower() == "bytedance" or "bytedance" in title.lower():
-        print(f"Adding ByteDance news to HTML: {title}")
-    
     html_content += f"""
     <div class="news-card">
         {company_tag}
@@ -447,15 +424,6 @@ if os.path.exists(cache_file):
         with open(cache_file, 'r', encoding='utf-8') as f:
             cached_news_data = json.load(f)
         print(f"Loaded {len(cached_news_data)} cached articles")
-        
-        # Check for ByteDance content in the cache
-        bytedance_cached = 0
-        for key, article in cached_news_data.items():
-            if "bytedance" in key.lower() or (article.get("company", "").lower() == "bytedance"):
-                bytedance_cached += 1
-                print(f"Found ByteDance article in cache: {article.get('title', key)}")
-        print(f"ByteDance articles in cache: {bytedance_cached}")
-        
     except Exception as e:
         print(f"Error loading cache: {e}")
 
@@ -464,10 +432,9 @@ news_data_for_js = []
 for item in news_items:
     url = str(item.get("url", "#"))
     title = str(item.get("title", "No title"))
-    company = str(item.get("company", ""))
     
     article_data = {
-        "company": company,
+        "company": str(item.get("company", "")),
         "title": title,
         "url": url,
         "source": str(item.get("source", "Unknown source")),
@@ -476,10 +443,6 @@ for item in news_items:
         "full_content": "",
         "extraction_status": "not_attempted"
     }
-    
-    # Extra check for ByteDance news
-    if company.lower() == "bytedance" or "bytedance" in title.lower():
-        print(f"Processing ByteDance article: {title}")
     
     # Check if we already have the content in cache
     cache_key = f"{url}_{title}"
@@ -520,14 +483,6 @@ for item in news_items:
             article_data["full_content"] = f"Error extracting content: {str(e)}"
     
     news_data_for_js.append(article_data)
-
-# Check ByteDance articles in final data
-bytedance_final = 0
-for article in news_data_for_js:
-    if article["company"].lower() == "bytedance" or "bytedance" in article["title"].lower():
-        bytedance_final += 1
-        print(f"Final ByteDance article: {article['title']} - Content length: {len(article['full_content'])}")
-print(f"Total ByteDance articles in final data: {bytedance_final}")
 
 # Save updated cache
 try:
