@@ -305,13 +305,26 @@ def fetch_url_content(url):
         print(f"Error fetching content from {url}: {e}")
         return ""
 
+# Load cached data if it exists
+cached_news_data = {}
+cache_file = "news_cache.json"
+if os.path.exists(cache_file):
+    try:
+        with open(cache_file, 'r', encoding='utf-8') as f:
+            cached_news_data = json.load(f)
+        print(f"Loaded {len(cached_news_data)} cached articles")
+    except Exception as e:
+        print(f"Error loading cache: {e}")
+
 # Prepare news data for the chatbot with URL content
 news_data_for_js = []
 for item in news_items:
     url = str(item.get("url", "#"))
+    title = str(item.get("title", "No title"))
+    
     article_data = {
         "company": str(item.get("company", "")),
-        "title": str(item.get("title", "No title")),
+        "title": title,
         "url": url,
         "source": str(item.get("source", "Unknown source")),
         "body": str(item.get("body", "No description available")),
@@ -319,14 +332,32 @@ for item in news_items:
         "full_content": ""
     }
     
-    # Only fetch content if we have a real URL
-    if url and url != "#" and url.startswith("http"):
-        print(f"Fetching content from {url}")
-        article_data["full_content"] = fetch_url_content(url)
-        # Polite delay to avoid hammering websites
-        time.sleep(random.uniform(1, 3))
+    # Check if we already have the content in cache
+    cache_key = f"{url}_{title}"
+    if cache_key in cached_news_data and cached_news_data[cache_key].get("full_content"):
+        print(f"Using cached content for: {title}")
+        article_data["full_content"] = cached_news_data[cache_key]["full_content"]
+    # Only fetch content if we have a real URL and it's not in cache
+    elif url and url != "#" and url.startswith("http"):
+        try:
+            print(f"Fetching content from {url}")
+            article_data["full_content"] = fetch_url_content(url)
+            # Update the cache with new content
+            cached_news_data[cache_key] = article_data
+            # Polite delay to avoid hammering websites
+            time.sleep(random.uniform(1, 3))
+        except Exception as e:
+            print(f"Error processing URL {url}: {e}")
     
     news_data_for_js.append(article_data)
+
+# Save updated cache
+try:
+    with open(cache_file, 'w', encoding='utf-8') as f:
+        json.dump(cached_news_data, f, ensure_ascii=False, indent=2)
+    print(f"Saved {len(cached_news_data)} articles to cache")
+except Exception as e:
+    print(f"Error saving cache: {e}")
 
 # Complete the HTML document
 current_time = datetime.datetime.now(datetime.timezone.utc).isoformat()
@@ -462,7 +493,7 @@ html_content += f"""
                 // Generate response based on findings
                 if (relevantArticles.length > 0) {{
                     const mostRelevant = relevantArticles[0];
-                    let response;
+                    let response = "";  // Define response variable
                     
                     // Extract the most relevant snippet from full content if available
                     let informativeSnippet = '';
@@ -470,7 +501,7 @@ html_content += f"""
                         const fullContent = mostRelevant.full_content;
                         
                         // Find a paragraph containing at least one keyword
-                        const paragraphs = fullContent.split(/\\n+/).filter(p => p.length > 100);
+                        const paragraphs = fullContent.split(/\\s+/).join(' ').split('. ').filter(p => p.length > 50);
                         
                         for (const paragraph of paragraphs) {{
                             if (keywords.some(keyword => paragraph.toLowerCase().includes(keyword))) {{
@@ -486,22 +517,22 @@ html_content += f"""
                     }}
                     
                     if (lowerQuestion.includes('what') && lowerQuestion.includes('company')) {{
-                        response = `Based on the news, ${mostRelevant.company} has been mentioned in relation to: "${mostRelevant.title}"`;
+                        response = `Based on the news, ${{mostRelevant.company}} has been mentioned in relation to: "${{mostRelevant.title}}"`;
                     }} else if (lowerQuestion.includes('latest') || lowerQuestion.includes('recent')) {{
-                        response = `The latest news I found is: "${mostRelevant.title}". ${mostRelevant.body.substring(0, 150)}...`;
+                        response = `The latest news I found is: "${{mostRelevant.title}}". ${{mostRelevant.body.substring(0, 150)}}...`;
                     }} else if (informativeSnippet) {{
                         // Use the full content snippet for detailed answers
-                        response = `According to ${mostRelevant.source}: "${informativeSnippet}"`;
+                        response = `According to ${{mostRelevant.source}}: "${{informativeSnippet}}"`;
                     }} else {{
-                        response = `I found this relevant information: "${mostRelevant.title}". ${mostRelevant.body.substring(0, 150)}...`;
+                        response = `I found this relevant information: "${{mostRelevant.title}}". ${{mostRelevant.body.substring(0, 150)}}...`;
                     }}
                     
-                    addMessageWithCitation(response, `${mostRelevant.source}, ${mostRelevant.date}`);
+                    addMessageWithCitation(response, `${{mostRelevant.source}}, ${{mostRelevant.date}}`);
                     
                     // If there are more relevant articles, mention them
                     if (relevantArticles.length > 1) {{
                         setTimeout(() => {{
-                            addMessage(`I also found ${relevantArticles.length - 1} more articles that might be relevant. Would you like to know more about any specific topic?`, 'bot');
+                            addMessage(`I also found ${{relevantArticles.length - 1}} more articles that might be relevant. Would you like to know more about any specific topic?`, 'bot');
                         }}, 1000);
                     }}
                 }} else {{
