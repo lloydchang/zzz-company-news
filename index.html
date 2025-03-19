@@ -76,6 +76,23 @@
             align-items: center;
             margin-bottom: 20px;
         }
+        /* Image thumbnail styles */
+        .news-image {
+            margin-bottom: 15px;
+            max-height: 180px;
+            overflow: hidden;
+            border-radius: 6px;
+        }
+        .news-image img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.3s ease;
+        }
+        .news-card:hover .news-image img {
+            transform: scale(1.05);
+        }
     </style>
 </head>
 <body>
@@ -87,8 +104,8 @@
 
     <div class="news-card">
         <span class="company-tag">SpaceX</span>
-        <h3 class="news-title"><a href="https://www.msn.com/en-us/news/technology/elon-musk-just-scored-a-much-needed-win-spacex-brought-those-2-stranded-astronauts-home/ar-AA1BbGy3" target="_blank">Elon Musk just scored a much-needed win: SpaceX brought those 2 stranded astronauts home</a></h3>
         <div class="news-image"><img src="https://i.insider.com/67d9bf3669253ccddf999a0a?width=1200&amp;format=jpeg" alt="Elon Musk just scored a much-needed win: SpaceX brought those 2 stranded astronauts home"></div>
+        <h3 class="news-title"><a href="https://www.msn.com/en-us/news/technology/elon-musk-just-scored-a-much-needed-win-spacex-brought-those-2-stranded-astronauts-home/ar-AA1BbGy3" target="_blank">Elon Musk just scored a much-needed win: SpaceX brought those 2 stranded astronauts home</a></h3>
         <div class="news-source">Insider</div>
         <p>Tesla and SpaceX have had a rough couple of months, but the highly anticipated return flight of two NASA astronauts is a boost for Elon Musk.</p>
         <div class="news-date">2025-03-18T22:01:57+00:00</div>
@@ -96,8 +113,8 @@
     
     <div class="news-card">
         <span class="company-tag">ByteDance</span>
-        <h3 class="news-title"><a href="https://www.msn.com/en-us/money/other/why-oracle-could-be-key-to-a-tiktok-deal/ar-AA1BbWvh" target="_blank">Why Oracle Could Be Key to a TikTok Deal</a></h3>
         <div class="news-image"><img src="https://assets.bwbx.io/images/users/iqjWHBFdfxIU/iRSYoYd2H0Fo/v0/1200x800.jpg" alt="Why Oracle Could Be Key to a TikTok Deal"></div>
+        <h3 class="news-title"><a href="https://www.msn.com/en-us/money/other/why-oracle-could-be-key-to-a-tiktok-deal/ar-AA1BbWvh" target="_blank">Why Oracle Could Be Key to a TikTok Deal</a></h3>
         <div class="news-source">Bloomberg</div>
         <p>TikTok parent company ByteDance Ltd. is once again racing toward a deadline to sell off its popular video app or face a ban in the US. Several interested buyers have publicly emerged, and the most discussed deal scenarios involve a key role for a longtime partner of the video platform: Oracle Corp.</p>
         <div class="news-date">2025-03-18T22:37:14+00:00</div>
@@ -105,8 +122,8 @@
     
     <div class="news-card">
         <span class="company-tag">OpenAI</span>
-        <h3 class="news-title"><a href="https://www.indiewire.com/news/business/ai-open-letter-openai-google-copyright-exemptions-1235104394/" target="_blank">An Army of A-Listers Are Challenging OpenAI and Google Over Copyright Exemptions for Training AI Models</a></h3>
         <div class="news-image"><img src="https://www.indiewire.com/wp-content/uploads/2025/03/GettyImages-2198295430.jpg?w=650" alt="An Army of A-Listers Are Challenging OpenAI and Google Over Copyright Exemptions for Training AI Models"></div>
+        <h3 class="news-title"><a href="https://www.indiewire.com/news/business/ai-open-letter-openai-google-copyright-exemptions-1235104394/" target="_blank">An Army of A-Listers Are Challenging OpenAI and Google Over Copyright Exemptions for Training AI Models</a></h3>
         <div class="news-source">IndieWire</div>
         <p>An open letter of over 400 Hollywood professionals opposed proposals by OpenAI and Google to offer fair use exemptions around copyright for AI models.</p>
         <div class="news-date">2025-03-19T00:58:00+00:00</div>
@@ -114,8 +131,8 @@
     
     <div class="news-card">
         <span class="company-tag">Stripe</span>
-        <h3 class="news-title"><a href="https://techcrunch.com/2025/02/27/stripe-finalizes-tender-sale-at-a-91-5b-valuation-says-payment-volumes-grew-to-1-4t-in-2024/" target="_blank">Stripe finalizes tender sale at a $91.5B valuation, says payment volumes grew to $1.4T in 2024</a></h3>
         <div class="news-image"><img src="https://techcrunch.com/wp-content/uploads/2024/04/Stripe-resized.webp?resize=1200,674" alt="Stripe finalizes tender sale at a $91.5B valuation, says payment volumes grew to $1.4T in 2024"></div>
+        <h3 class="news-title"><a href="https://techcrunch.com/2025/02/27/stripe-finalizes-tender-sale-at-a-91-5b-valuation-says-payment-volumes-grew-to-1-4t-in-2024/" target="_blank">Stripe finalizes tender sale at a $91.5B valuation, says payment volumes grew to $1.4T in 2024</a></h3>
         <div class="news-source">TechCrunch</div>
         <p>Digital payments platform Stripe has yet to lay out plans to go public, but in the meantime the company has thrown past and present employees a line for</p>
         <div class="news-date">2025-02-27T14:39:00+00:00</div>
@@ -123,8 +140,8 @@
     
     <div class="news-card">
         <span class="company-tag">SHEIN</span>
-        <h3 class="news-title"><a href="https://www.yahoo.com/lifestyle/coach-owner-tapestry-files-trademark-194143470.html" target="_blank">Coach&#x27;s Owner Tapestry Files Trademark Infringement Suit Against Shein</a></h3>
         <div class="news-image"><img src="https://media.zenfs.com/en/wwd_409/fe23ef9be888a2a3a08ebd5270159cb9" alt="Coach&#x27;s Owner Tapestry Files Trademark Infringement Suit Against Shein"></div>
+        <h3 class="news-title"><a href="https://www.yahoo.com/lifestyle/coach-owner-tapestry-files-trademark-194143470.html" target="_blank">Coach&#x27;s Owner Tapestry Files Trademark Infringement Suit Against Shein</a></h3>
         <div class="news-source">Yahoo</div>
         <p>Like its chief fast-fashion rival Temu, Shein is facing multiple cases of trademark infringement by companies and artists.</p>
         <div class="news-date">2025-03-18T19:41:00+00:00</div>
@@ -132,8 +149,8 @@
     
     <div class="news-card">
         <span class="company-tag">Databricks</span>
-        <h3 class="news-title"><a href="https://markets.businessinsider.com/news/stocks/palantir-partners-with-databricks-in-a-move-that-shakes-the-ai-industry-1034490156" target="_blank">Palantir Partners with Databricks in a Move That Shakes the AI Industry</a></h3>
         <div class="news-image"><img src="https://blog.tipranks.com/wp-content/uploads/2025/03/image-934.png?utm_source=markets.businessinsider.com&amp;amp;utm_medium=referral" alt="Palantir Partners with Databricks in a Move That Shakes the AI Industry"></div>
+        <h3 class="news-title"><a href="https://markets.businessinsider.com/news/stocks/palantir-partners-with-databricks-in-a-move-that-shakes-the-ai-industry-1034490156" target="_blank">Palantir Partners with Databricks in a Move That Shakes the AI Industry</a></h3>
         <div class="news-source">Markets Insider</div>
         <p>Overall, Palantir (PLTR) has had a solid start to 2025. Its growth numbers look impressive, and its AI platform is gaining traction across</p>
         <div class="news-date">2025-03-18T14:30:00+00:00</div>
@@ -141,8 +158,8 @@
     
     <div class="news-card">
         <span class="company-tag">Anthropic</span>
-        <h3 class="news-title"><a href="https://www.msn.com/en-us/news/technology/anthropic-backed-ai-powered-code-review-platform-graphite-raises-cash/ar-AA1Baywb" target="_blank">Anthropic-backed AI-powered code review platform Graphite raises cash</a></h3>
         <div class="news-image"><img src="https://techcrunch.com/wp-content/uploads/2024/06/GettyImages-1388336038.jpg?resize=1200,675" alt="Anthropic-backed AI-powered code review platform Graphite raises cash"></div>
+        <h3 class="news-title"><a href="https://www.msn.com/en-us/news/technology/anthropic-backed-ai-powered-code-review-platform-graphite-raises-cash/ar-AA1Baywb" target="_blank">Anthropic-backed AI-powered code review platform Graphite raises cash</a></h3>
         <div class="news-source">TechCrunch</div>
         <p>AI coding assistants are becoming wildly popular, with the vast majority of respondents in GitHub&#x27;s latest poll saying that they&#x27;ve adopted AI tools in some form. Y Combinator partner Jared Friedman recently claimed that a quarter of YC&#x27;s W25 startup batch have 95% of their codebases generated by AI.</p>
         <div class="news-date">2025-03-18T15:47:00+00:00</div>
@@ -150,8 +167,8 @@
     
     <div class="news-card">
         <span class="company-tag">xAI</span>
-        <h3 class="news-title"><a href="https://www.msn.com/en-us/news/technology/elon-musk-s-ai-company-xai-acquires-a-generative-ai-video-startup/ar-AA1B6zqq" target="_blank">Elon Musk&#x27;s AI company, xAI, acquires a generative AI video startup</a></h3>
         <div class="news-image"><img src="https://techcrunch.com/wp-content/uploads/2025/02/GettyImages-2194754542.jpg?w=1024" alt="Elon Musk&#x27;s AI company, xAI, acquires a generative AI video startup"></div>
+        <h3 class="news-title"><a href="https://www.msn.com/en-us/news/technology/elon-musk-s-ai-company-xai-acquires-a-generative-ai-video-startup/ar-AA1B6zqq" target="_blank">Elon Musk&#x27;s AI company, xAI, acquires a generative AI video startup</a></h3>
         <div class="news-source">TechCrunch</div>
         <p>Elon Musk&#x27;s AI company, xAI, has acquired Hotshot, a startup working on AI-powered video generation tools along the lines of OpenAI&#x27;s Sora. Aakash Sastry, Hotshot&#x27;s CEO and co-founder, announced the news in a post on X on Monday.</p>
         <div class="news-date">2025-03-17T19:38:00+00:00</div>
@@ -159,8 +176,8 @@
     
     <div class="news-card">
         <span class="company-tag">Revolut</span>
-        <h3 class="news-title"><a href="https://www.msn.com/en-us/money/other/revolut-sees-u-k-banking-license-paving-way-for-potential-ipo-expansion/ar-AA1B9Naj" target="_blank">Revolut Sees U.K. Banking License Paving Way for Potential IPO, Expansion</a></h3>
         <div class="news-image"><img src="https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AA1B9DYK.img?w=1280&amp;h=853&amp;m=4&amp;q=72" alt="Revolut Sees U.K. Banking License Paving Way for Potential IPO, Expansion"></div>
+        <h3 class="news-title"><a href="https://www.msn.com/en-us/money/other/revolut-sees-u-k-banking-license-paving-way-for-potential-ipo-expansion/ar-AA1B9Naj" target="_blank">Revolut Sees U.K. Banking License Paving Way for Potential IPO, Expansion</a></h3>
         <div class="news-source">The Wall Street Journal</div>
         <p>The fintech was valued at $45 billion in an oversubscribed secondary share sale, which sets a floor for its valuation ahead of any IPO and puts it on par with the likes of NatWest and Deutsche Bank.</p>
         <div class="news-date">2025-03-18T12:21:00+00:00</div>
@@ -168,14 +185,14 @@
     
     <div class="news-card">
         <span class="company-tag">Canva</span>
-        <h3 class="news-title"><a href="https://www.msn.com/en-us/general/general/how-to-use-canva-ai-to-create-business-cards/ar-AA1B595w" target="_blank">How to Use Canva AI to Create Business Cards</a></h3>
         <div class="news-image"><img src="https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AA1B5IBq.img?w=1612&amp;h=930&amp;m=4&amp;q=75" alt="How to Use Canva AI to Create Business Cards"></div>
+        <h3 class="news-title"><a href="https://www.msn.com/en-us/general/general/how-to-use-canva-ai-to-create-business-cards/ar-AA1B595w" target="_blank">How to Use Canva AI to Create Business Cards</a></h3>
         <div class="news-source">CNET</div>
         <p>I decided to use Canva&#x27;s Magic Design, Magic Media, Magic Write and Canva Print for my business card project. I&#x27;m not a fine artist, but I do appreciate support in creating someth</p>
         <div class="news-date">2025-03-17T14:02:22+00:00</div>
     </div>
     
     </div>
-    <p class="timestamp">Last updated: 2025-03-19T09:04:32.702668+00:00</p>
+    <p class="timestamp">Last updated: 2025-03-19T09:09:37.576116+00:00</p>
 </body>
 </html>
