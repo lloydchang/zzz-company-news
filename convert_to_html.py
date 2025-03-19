@@ -310,14 +310,32 @@ def fetch_url_content(url):
         soup = BeautifulSoup(response.text, 'html.parser')
         
         # Remove script, style, and nav elements
-        for element in soup(['script', 'style', 'nav', 'header', 'footer', 'aside']):
+        for element in soup(['script', 'style', 'nav', 'header', 'footer', 'aside', 'form']):
             element.decompose()
             
+        # First try to find the main article content
+        main_content = None
+        for selector in ['article', '.article', '.post-content', '.story', 'main', '#content', '.content']:
+            content = soup.select_one(selector)
+            if content and len(content.get_text(strip=True)) > 200:
+                main_content = content
+                break
+        
+        # If no specific article container is found, use the whole body
+        if not main_content:
+            main_content = soup.body
+        
         # Get text and clean it up
-        text = soup.get_text(separator=' ', strip=True)
-        # Clean up white spaces
-        text = ' '.join(text.split())
-        return text
+        if (main_content):
+            text = main_content.get_text(separator='\n', strip=True)
+            # Clean up white spaces but preserve paragraph structure
+            text = '\n'.join([' '.join(line.split()) for line in text.split('\n') if line.strip()])
+        else:
+            text = soup.get_text(separator='\n', strip=True)
+            text = '\n'.join([' '.join(line.split()) for line in text.split('\n') if line.strip()])
+        
+        # Return only the first 10000 characters to avoid massive texts
+        return text[:10000]
     except Exception as e:
         print(f"Error fetching content from {url}: {e}")
         return ""
@@ -404,6 +422,9 @@ html_content += f"""
         // Store news data for the chatbot
         const newsData = {json.dumps(news_data_for_js)};
         
+        // Debug flag - set to true to see debug info in console
+        const DEBUG = true;
+        
         // Chatbot functionality
         document.addEventListener('DOMContentLoaded', () => {{
             const chatToggle = document.querySelector('.chat-toggle-button');
@@ -471,10 +492,39 @@ html_content += f"""
                 // Convert question to lowercase for case-insensitive matching
                 const lowerQuestion = question.toLowerCase();
                 
-                // Simple keyword extraction (this could be more sophisticated)
-                const keywords = lowerQuestion.split(' ')
-                    .filter(word => word.length > 3)
-                    .map(word => word.replace(/[^a-zA-Z0-9]/g, ''));
+                if (DEBUG) {{
+                    console.log('Processing query:', question);
+                    console.log('Available articles:', newsData.length);
+                }}
+                
+                // Improved keyword extraction
+                let keywords = [];
+                
+                // First extract quoted phrases
+                const quoteRegex = /"([^"]+)"/g;
+                let quoteMatch;
+                while ((quoteMatch = quoteRegex.exec(question)) !== null) {{
+                    keywords.push(quoteMatch[1].toLowerCase());
+                }}
+                
+                // Then extract individual important words (excluding common stop words)
+                const stopWords = new Set([
+                    'a', 'an', 'the', 'and', 'or', 'but', 'is', 'are', 'was', 'were', 
+                    'to', 'of', 'in', 'on', 'at', 'by', 'for', 'with', 'about', 'from',
+                    'these', 'those', 'this', 'that', 'have', 'has', 'had', 'do', 'does',
+                    'did', 'can', 'could', 'will', 'would', 'should', 'may', 'might'
+                ]);
+                
+                const wordKeywords = lowerQuestion
+                    .replace(/[^a-zA-Z0-9 ]/g, ' ')
+                    .split(' ')
+                    .filter(word => word.length > 2 && !stopWords.has(word.toLowerCase()));
+                    
+                keywords = [...keywords, ...wordKeywords];
+                
+                if (DEBUG) {{
+                    console.log('Extracted keywords:', keywords);
+                }}
                 
                 // Search for relevant articles
                 let relevantArticles = [];
@@ -484,22 +534,44 @@ html_content += f"""
                     const body = article.body.toLowerCase();
                     const fullContent = article.full_content ? article.full_content.toLowerCase() : '';
                     
+                    // Check for direct question matches in content
+                    if (fullContent && fullContent.includes(lowerQuestion)) {{
+                        score += 10; // Large boost for exact question match
+                    }}
+                    
                     // Check if keywords are in title, body or full content
                     keywords.forEach(keyword => {{
+                        // Check for exact matches first
                         if (title.includes(keyword)) score += 5;  // Title matches are weighted highest
                         if (body.includes(keyword)) score += 3;   // Summary matches are important
-                        if (fullContent && fullContent.includes(keyword)) score += 1;  // Full content matches
+                        
+                        if (fullContent) {{
+                            // For longer keywords (phrases), boost the score even more
+                            if (keyword.length > 10 && fullContent.includes(keyword)) {{
+                                score += 8;
+                            }} else if (fullContent.includes(keyword)) {{
+                                score += 2;  // Full content matches
+                            }}
+                            
+                            // Count occurrences for additional scoring
+                            const keywordRegex = new RegExp(keyword, 'gi');
+                            const occurrences = (fullContent.match(keywordRegex) || []).length;
+                            score += Math.min(occurrences, 5) * 0.5; // Cap at 2.5 points from occurrences
+                        }}
                     }});
                     
-                    // For specific question types, check for entities in full content
-                    if ((lowerQuestion.includes('who') || lowerQuestion.includes('person')) && fullContent) {{
-                        // Simple entity detection (could be more sophisticated)
+                    // Special handling for specific question types
+                    if (lowerQuestion.includes('who') || lowerQuestion.includes('person')) {{
+                        // Person entity detection
                         const nameRegex = /([A-Z][a-z]+ [A-Z][a-z]+)/g;
-                        const names = fullContent.match(nameRegex);
-                        if (names && names.length > 0) score += 2;
+                        const names = fullContent ? (fullContent.match(nameRegex) || []) : [];
+                        if (names.length > 0) score += 2;
                     }}
                     
                     if (score > 0) {{
+                        if (DEBUG) {{
+                            console.log(`Article: ${article.title}, Score: ${score}`);
+                        }}
                         relevantArticles.push({{...article, score}});
                     }}
                 }});
@@ -507,32 +579,76 @@ html_content += f"""
                 // Sort by relevance
                 relevantArticles.sort((a, b) => b.score - a.score);
                 
+                if (DEBUG) {{
+                    console.log('Relevant articles found:', relevantArticles.length);
+                    if (relevantArticles.length > 0) {{
+                        console.log('Top article:', relevantArticles[0].title);
+                        console.log('Top score:', relevantArticles[0].score);
+                    }}
+                }}
+                
                 // Generate response based on findings
                 if (relevantArticles.length > 0) {{
                     const mostRelevant = relevantArticles[0];
-                    let response = "";  // Define response variable
+                    let response = "";
                     
                     // Extract the most relevant snippet from full content if available
                     let informativeSnippet = '';
                     if (mostRelevant.full_content) {{
                         const fullContent = mostRelevant.full_content;
                         
-                        // Find a paragraph containing at least one keyword
-                        const paragraphs = fullContent.split(/\\s+/).join(' ').split('. ').filter(p => p.length > 50);
+                        // Improved paragraph extraction
+                        // First split by clear paragraph breaks
+                        const paragraphs = fullContent.split(/\\n+/)
+                            .filter(p => p.trim().length > 50);
                         
+                        // If no paragraphs found, create them from sentences
+                        let foundRelevantSnippet = false;
+                        
+                        // First look for paragraphs containing multiple keywords
                         for (const paragraph of paragraphs) {{
-                            if (keywords.some(keyword => paragraph.toLowerCase().includes(keyword))) {{
-                                informativeSnippet = paragraph.substring(0, 250) + '...';
+                            const lowerPara = paragraph.toLowerCase();
+                            const matchedKeywords = keywords.filter(kw => lowerPara.includes(kw));
+                            
+                            if (matchedKeywords.length >= 2) {{
+                                informativeSnippet = paragraph.trim().substring(0, 300) + '...';
+                                foundRelevantSnippet = true;
                                 break;
                             }}
                         }}
                         
-                        // If no good paragraph found, just take the beginning
-                        if (!informativeSnippet && fullContent.length > 0) {{
-                            informativeSnippet = fullContent.substring(0, 250) + '...';
+                        // If no multi-keyword paragraph, look for any keyword match
+                        if (!foundRelevantSnippet) {{
+                            for (const paragraph of paragraphs) {{
+                                if (keywords.some(keyword => paragraph.toLowerCase().includes(keyword))) {{
+                                    informativeSnippet = paragraph.trim().substring(0, 300) + '...';
+                                    foundRelevantSnippet = true;
+                                    break;
+                                }}
+                            }}
+                        }}
+                        
+                        // If still no good paragraph found, just take an interesting part of the content
+                        if (!foundRelevantSnippet && fullContent.length > 0) {{
+                            // If we have substantial content, try to find the most interesting part
+                            if (fullContent.length > 500) {{
+                                // Look for a part that might be from the middle of the article
+                                const middleStart = Math.floor(fullContent.length / 3);
+                                const middleContent = fullContent.substring(middleStart, middleStart + 500);
+                                const sentences = middleContent.split(/[.!?] /).filter(s => s.length > 30);
+                                
+                                if (sentences.length > 0) {{
+                                    informativeSnippet = sentences[0].trim() + '...';
+                                }} else {{
+                                    informativeSnippet = fullContent.substring(0, 300) + '...';
+                                }}
+                            }} else {{
+                                informativeSnippet = fullContent.substring(0, 300) + '...';
+                            }}
                         }}
                     }}
                     
+                    // Generate different responses based on question type
                     if (lowerQuestion.includes('what') && lowerQuestion.includes('company')) {{
                         response = `Based on the news, ${{mostRelevant.company}} has been mentioned in relation to: "${{mostRelevant.title}}"`;
                     }} else if (lowerQuestion.includes('latest') || lowerQuestion.includes('recent')) {{
@@ -544,7 +660,7 @@ html_content += f"""
                         response = `I found this relevant information: "${{mostRelevant.title}}". ${{mostRelevant.body.substring(0, 150)}}...`;
                     }}
                     
-                    addMessageWithCitation(response, `${{mostRelevant.source}}, ${{mostRelevant.date}}`);
+                    addMessageWithCitation(response, `${{mostRelevant.source}}, ${{mostRelevant.date}} - ${{mostRelevant.url}}`);
                     
                     // If there are more relevant articles, mention them
                     if (relevantArticles.length > 1) {{
