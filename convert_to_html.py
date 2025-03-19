@@ -299,48 +299,122 @@ for item in news_items:
     </div>
     """
 
-# Function to fetch content from URLs
+# Function to fetch content from URLs - improved to handle different sites better
 def fetch_url_content(url):
     try:
+        # Don't process certain problematic URLs
+        if "microsoft.com/en-us/investor/" in url:
+            return "Microsoft investor relations content is not available for extraction."
+        
         headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+            'Accept-Language': 'en-US,en;q=0.5',
+            'Referer': 'https://www.google.com/',
+            'DNT': '1',
+            'Connection': 'keep-alive',
+            'Upgrade-Insecure-Requests': '1',
+            'Cache-Control': 'max-age=0',
         }
-        response = requests.get(url, headers=headers, timeout=10)
-        response.raise_for_status()  # Raise an exception for 4XX/5XX responses
+        
+        # Add timeout to prevent hanging on problematic sites
+        response = requests.get(url, headers=headers, timeout=15)
+        response.raise_for_status()
         
         # Parse the HTML content
         soup = BeautifulSoup(response.text, 'html.parser')
         
-        # Remove script, style, and nav elements
+        # Special handling for MSN URLs
+        if 'msn.com' in url:
+            print(f"Special handling for MSN URL: {url}")
+            # Find the main content container in MSN articles
+            article_body = soup.find('div', {'class': ['articlecontent', 'mainarticle', 'contentid', 'primary-content']}) or \
+                          soup.find('div', {'data-testid': ['article-body', 'content-canvas']}) or \
+                          soup.find('article') or \
+                          soup.find('div', {'class': 'article-body'})
+            
+            if article_body:
+                # Process only the article content
+                for element in article_body.find_all(['script', 'style', 'nav', 'aside']):
+                    element.decompose()
+                
+                # Extract paragraphs from the article body
+                paragraphs = article_body.find_all('p')
+                if paragraphs:
+                    return "\n\n".join([p.get_text(strip=True) for p in paragraphs if p.get_text(strip=True)])
+        
+        # Remove script, style, and nav elements for any site
         for element in soup(['script', 'style', 'nav', 'header', 'footer', 'aside', 'form']):
             element.decompose()
-            
-        # First try to find the main article content
-        main_content = None
-        for selector in ['article', '.article', '.post-content', '.story', 'main', '#content', '.content']:
-            content = soup.select_one(selector)
-            if content and len(content.get_text(strip=True)) > 200:
-                main_content = content
+        
+        # Try to find the article content using common selectors
+        content_selectors = [
+            'article', '.article', '.post-content', '.story', 'main', '#content', '.content',
+            '.post', '.entry-content', '.article-content', '.article__content', '.article-body'
+        ]
+        
+        article_content = None
+        for selector in content_selectors:
+            elements = soup.select(selector)
+            for element in elements:
+                # Only consider elements with substantial text
+                if len(element.get_text(strip=True)) > 150:
+                    article_content = element
+                    break
+            if article_content:
                 break
         
-        # If no specific article container is found, use the whole body
-        if not main_content:
-            main_content = soup.body
+        # If no article content found, try to find all paragraphs
+        if not article_content:
+            paragraphs = soup.find_all('p')
+            if paragraphs:
+                # Only include paragraphs with reasonable length
+                text_paragraphs = [p.get_text(strip=True) for p in paragraphs if len(p.get_text(strip=True)) > 30]
+                if text_paragraphs:
+                    return "\n\n".join(text_paragraphs[:20])  # Limit to first 20 paragraphs
+
+        # Get text from article content if found
+        if article_content:
+            # Extract all paragraphs
+            paragraphs = article_content.find_all('p')
+            if paragraphs:
+                return "\n\n".join([p.get_text(strip=True) for p in paragraphs if p.get_text(strip=True)])
+            else:
+                # Fallback: get all text with paragraph structure
+                text = article_content.get_text(separator='\n', strip=True)
+                # Clean up white spaces but preserve paragraph structure
+                text = '\n\n'.join([' '.join(line.split()) for line in text.split('\n') if line.strip() and len(line) > 30])
+                return text
+                
+        # If no specific content found, use the whole body with cleaning
+        body_text = ""
+        if soup.body:
+            # Get all paragraphs in the body
+            paragraphs = soup.body.find_all('p')
+            if paragraphs:
+                body_text = "\n\n".join([p.get_text(strip=True) for p in paragraphs 
+                                      if len(p.get_text(strip=True)) > 30])
         
-        # Get text and clean it up
-        if (main_content):
-            text = main_content.get_text(separator='\n', strip=True)
-            # Clean up white spaces but preserve paragraph structure
-            text = '\n'.join([' '.join(line.split()) for line in text.split('\n') if line.strip()])
-        else:
+        # If we still don't have content, use the whole page text as a last resort
+        if not body_text:
             text = soup.get_text(separator='\n', strip=True)
-            text = '\n'.join([' '.join(line.split()) for line in text.split('\n') if line.strip()])
+            body_text = '\n\n'.join([' '.join(line.split()) for line in text.split('\n') 
+                                 if line.strip() and len(line.strip()) > 30])
+            
+        # Check if we have meaningful content
+        if len(body_text) < 100 or len(body_text.split()) < 20:
+            print(f"Warning: Extracted content is suspiciously short for {url}")
+            # Try a different approach for very short content
+            all_text = soup.get_text(separator=' ', strip=True)
+            if len(all_text) > 200:
+                return all_text[:10000]  # Use raw text as a last resort
+            
+        # Limit the content length
+        return body_text[:10000]
         
-        # Return only the first 10000 characters to avoid massive texts
-        return text[:10000]
     except Exception as e:
         print(f"Error fetching content from {url}: {e}")
-        return ""
+        return f"Content extraction failed: {str(e)}"
 
 # Load cached data if it exists
 cached_news_data = {}
@@ -353,7 +427,7 @@ if os.path.exists(cache_file):
     except Exception as e:
         print(f"Error loading cache: {e}")
 
-# Prepare news data for the chatbot with URL content
+# Prepare news data for the chatbot with URL content - with better error handling
 news_data_for_js = []
 for item in news_items:
     url = str(item.get("url", "#"))
@@ -366,25 +440,47 @@ for item in news_items:
         "source": str(item.get("source", "Unknown source")),
         "body": str(item.get("body", "No description available")),
         "date": str(item.get("date", "")),
-        "full_content": ""
+        "full_content": "",
+        "extraction_status": "not_attempted"
     }
     
     # Check if we already have the content in cache
     cache_key = f"{url}_{title}"
     if cache_key in cached_news_data and cached_news_data[cache_key].get("full_content"):
-        print(f"Using cached content for: {title}")
-        article_data["full_content"] = cached_news_data[cache_key]["full_content"]
-    # Only fetch content if we have a real URL and it's not in cache
-    elif url and url != "#" and url.startswith("http"):
+        content = cached_news_data[cache_key]["full_content"]
+        # Verify the cached content is substantial
+        if content and len(content) > 100 and not content.startswith("Content extraction failed"):
+            print(f"Using cached content for: {title}")
+            article_data["full_content"] = content
+            article_data["extraction_status"] = "cached"
+        else:
+            print(f"Cached content for '{title}' seems inadequate. Re-fetching...")
+            article_data["extraction_status"] = "cache_inadequate"
+    
+    # Only fetch content if we have a real URL and it's not adequately cached
+    if (article_data["extraction_status"] != "cached" and 
+        url and url != "#" and url.startswith("http")):
         try:
             print(f"Fetching content from {url}")
-            article_data["full_content"] = fetch_url_content(url)
-            # Update the cache with new content
-            cached_news_data[cache_key] = article_data
+            content = fetch_url_content(url)
+            
+            # Verify the fetched content is substantial
+            if content and len(content) > 100:
+                article_data["full_content"] = content
+                article_data["extraction_status"] = "success"
+                # Update the cache with new content
+                cached_news_data[cache_key] = article_data
+            else:
+                print(f"Warning: Fetched content for '{title}' is too short or empty")
+                article_data["extraction_status"] = "content_too_short"
+                article_data["full_content"] = f"Note: Content could not be properly extracted from this source. Using summary instead.\n\n{article_data['body']}"
+            
             # Polite delay to avoid hammering websites
-            time.sleep(random.uniform(1, 3))
+            time.sleep(random.uniform(1.5, 4))
         except Exception as e:
             print(f"Error processing URL {url}: {e}")
+            article_data["extraction_status"] = "error"
+            article_data["full_content"] = f"Error extracting content: {str(e)}"
     
     news_data_for_js.append(article_data)
 

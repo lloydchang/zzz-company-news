@@ -35,11 +35,36 @@ jobs:
           # Process companies and append to CSV
           for company in "SpaceX" "ByteDance" "OpenAI" "Stripe" "SHEIN" "Databricks" "Anthropic" "xAI" "Revolut" "Canva"; do
             echo "Processing $company..."
-            ddgs news -k "$company" -m 1 -o "news-$company.csv"
+            # Add retry logic and more specific search terms for certain companies
+            if [ "$company" == "OpenAI" ]; then
+              echo "Using special handling for OpenAI..."
+              # Try with different search terms
+              ddgs news -k "OpenAI ChatGPT" -m 2 -o "news-$company.csv" || 
+              ddgs news -k "OpenAI company" -m 2 -o "news-$company.csv" ||
+              ddgs news -k "Sam Altman OpenAI" -m 2 -o "news-$company.csv"
+            else
+              # Normal processing with retry
+              ddgs news -k "$company" -m 2 -o "news-$company.csv" || 
+              # Retry once if it fails
+              (echo "Retrying $company..." && sleep 5 && ddgs news -k "$company" -m 2 -o "news-$company.csv")
+            fi
             
-            # Skip header row and add company as first column for each row
-            awk -F, 'NR>1 {print "\"'$company'\","$0}' "news-$company.csv" >> aggregated-news.csv
+            # Check if CSV was created and has content (more than just header)
+            if [ -f "news-$company.csv" ] && [ $(wc -l < "news-$company.csv") -gt 1 ]; then
+              # Skip header row and add company as first column for each row
+              awk -F, 'NR>1 {print "\"'$company'\","$0}' "news-$company.csv" >> aggregated-news.csv
+              echo "Added $company news to aggregated CSV"
+            else
+              echo "Warning: No results for $company or CSV creation failed"
+              # Create an empty CSV with just the header to prevent errors
+              echo "date,title,body,url,image,source" > "news-$company.csv"
+              # Add a placeholder entry in aggregated CSV
+              echo "\"$company\",\"$(date +%Y-%m-%d)\",\"No recent news found for $company\",\"No content available\",\"#\",\"\",\"System\"" >> aggregated-news.csv
+            fi
           done
+          
+          # Show summary
+          echo "Aggregated news CSV created with $(( $(wc -l < aggregated-news.csv) - 1 )) entries"
       
       - name: Convert CSV to HTML
         run: |
