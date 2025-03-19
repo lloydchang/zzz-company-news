@@ -1,5 +1,5 @@
 Aggregate public news about 10 private companies
 
-![Company News Dashboard](https://github.com/user-attachments/assets/fd316cae-bcb2-4a25-873a-ff6f2df4aadf)
+![Company News Dashboard](https://github.com/user-attachments/assets/7a8b4773-d993-48a8-963d-4908d9d94302)
 
-![News Assistant in Company News Dashboard](https://github.com/user-attachments/assets/0239b98a-9878-402b-b654-6e30fbc91fd1)
+![News Assistant in Company News Dashboard](https://github.com/user-attachments/assets/fc0427fb-41da-49ee-b499-137955c35ca5)
