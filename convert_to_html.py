@@ -10,6 +10,22 @@ with open("aggregated-news.csv", "r", encoding="utf-8") as file:
     for row in reader:
         news_items.append(row)
 
+# Better company detection - create a mapping first
+company_mapping = {}
+
+# First, create a mapping of titles to companies from individual CSV files
+for csv_file in os.listdir():
+    if csv_file.startswith("news-") and csv_file.endswith(".csv"):
+        company_name = csv_file[5:-4]  # Remove "news-" and ".csv"
+        try:
+            with open(csv_file, 'r', encoding="utf-8") as f:
+                reader = csv.DictReader(f)
+                for row in reader:
+                    if "title" in row:
+                        company_mapping[row["title"]] = company_name
+        except Exception as e:
+            print(f"Error reading {csv_file}: {e}")
+
 # Generate HTML content
 html_content = """<!DOCTYPE html>
 <html lang="en">
@@ -107,28 +123,11 @@ for item in news_items:
     body = html.escape(item.get("body", "No description available"))  # Changed from snippet to body
     date = html.escape(item.get("date", ""))
     
-    # Determine company by looking at the filename pattern in the CSV
-    company = None
-    # Try to determine company from the CSV file name pattern
-    for field in item:
-        if field.lower() == "query" and item[field]:
-            company = item[field].strip('"')
-            break
-    
-    # Extract company name from the file that created this entry
-    if not company:
-        for csv_file in os.listdir():
-            if csv_file.startswith("news-") and csv_file.endswith(".csv"):
-                possible_company = csv_file[5:-4]  # Remove "news-" and ".csv"
-                # Check if this item came from this file
-                # This is a simplification and may need refinement
-                with open(csv_file, 'r') as f:
-                    if title in f.read():
-                        company = possible_company
-                        break
+    # Get company from the mapping
+    company = company_mapping.get(item.get("title", ""))
     
     # Only add company tag if we found a valid company name
-    company_tag = f'<span class="company-tag">{company}</span>' if company and company != "Unknown" else ''
+    company_tag = f'<span class="company-tag">{company}</span>' if company else ''
     
     html_content += f"""
     <div class="news-card">
