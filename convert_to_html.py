@@ -140,7 +140,7 @@ for item in news_items:
     """
 
 # Complete the HTML document
-current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+current_time = datetime.datetime.now(datetime.timezone.utc).isoformat()
 html_content += f"""
     </div>
     <p class="timestamp">Last updated: {current_time}</p>
