@@ -1,6 +1,7 @@
 import csv
 import html
 import datetime
+import os
 
 # Read the CSV file
 news_items = []
@@ -107,15 +108,31 @@ for item in news_items:
     date = html.escape(item.get("date", ""))
     
     # Determine company by looking at the filename pattern in the CSV
-    company = "Unknown"
+    company = None
+    # Try to determine company from the CSV file name pattern
     for field in item:
         if field.lower() == "query" and item[field]:
             company = item[field].strip('"')
             break
     
+    # Extract company name from the file that created this entry
+    if not company:
+        for csv_file in os.listdir():
+            if csv_file.startswith("news-") and csv_file.endswith(".csv"):
+                possible_company = csv_file[5:-4]  # Remove "news-" and ".csv"
+                # Check if this item came from this file
+                # This is a simplification and may need refinement
+                with open(csv_file, 'r') as f:
+                    if title in f.read():
+                        company = possible_company
+                        break
+    
+    # Only add company tag if we found a valid company name
+    company_tag = f'<span class="company-tag">{company}</span>' if company and company != "Unknown" else ''
+    
     html_content += f"""
     <div class="news-card">
-        <span class="company-tag">{company}</span>
+        {company_tag}
         <h3 class="news-title"><a href="{url}" target="_blank">{title}</a></h3>
         <div class="news-source">{source}</div>
         <p>{snippet}</p>
