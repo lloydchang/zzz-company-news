@@ -396,7 +396,7 @@ try:
 except Exception as e:
     print(f"Error saving cache: {e}")
 
-# Complete the HTML document
+# Complete the HTML document with proper escaping of JavaScript template literals
 current_time = datetime.datetime.now(datetime.timezone.utc).isoformat()
 html_content += f"""
     </div>
@@ -582,7 +582,8 @@ html_content += f"""
                     
                     if (score > 0) {{
                         if (DEBUG) {{
-                            console.log(`Article: ${article.title}, Score: ${score}`);
+                            // FIX: Properly escape JavaScript template literals
+                            console.log(`Article: ${{article.title}}, Score: ${{score}}`);
                         }}
                         relevantArticles.push({{...article, score}});
                     }}
@@ -594,6 +595,7 @@ html_content += f"""
                 if (DEBUG) {{
                     console.log('Relevant articles found:', relevantArticles.length);
                     if (relevantArticles.length > 0) {{
+                        // FIX: Properly escape JavaScript template literals
                         console.log('Top article:', relevantArticles[0].title);
                         console.log('Top score:', relevantArticles[0].score);
                     }}
@@ -692,7 +694,7 @@ html_content += f"""
             }});
             
             // Make sure chat toggle is visible on page load
-            chatToggle.style.display = 'flex';
+            chatToggle.style.display = 'none'; // Keep it hidden since we're auto-opening
             chatToggle.style.opacity = '1';
             
             // Add a timeout to make the chatbot button pulse after a short delay
