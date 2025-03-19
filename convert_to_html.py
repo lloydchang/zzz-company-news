@@ -117,14 +117,15 @@ html_content = """<!DOCTYPE html>
 
 # Add each news item to the HTML
 for item in news_items:
-    title = html.escape(item.get("title", "No title"))
-    url = html.escape(item.get("url", "#"))
-    source = html.escape(item.get("source", "Unknown source"))
-    body = html.escape(item.get("body", "No description available"))  # Changed from snippet to body
-    date = html.escape(item.get("date", ""))
-    
-    # Get company from the mapping
-    company = company_mapping.get(item.get("title", ""))
+    # Convert all values to strings to avoid NoneType errors
+    title = html.escape(str(item.get("title", "No title")))
+    url = html.escape(str(item.get("url", "#")))
+    source = html.escape(str(item.get("source", "Unknown source")))
+    body = html.escape(str(item.get("body", "No description available")))
+    date = html.escape(str(item.get("date", "")))
+
+    # Get company directly from the company column in the CSV
+    company = str(item.get("company", ""))
     
     # Only add company tag if we found a valid company name
     company_tag = f'<span class="company-tag">{company}</span>' if company else ''
