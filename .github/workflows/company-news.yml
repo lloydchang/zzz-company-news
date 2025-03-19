@@ -3,6 +3,7 @@
 name: Company News
 
 on:
+  push:
   # schedule:
   #   - cron: '0 0 * * 3,5' # Runs Wednesday and Friday at midnight UTC
   workflow_dispatch:
