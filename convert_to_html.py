@@ -15,7 +15,7 @@ company_mapping = {}
 
 # First, create a mapping of titles to companies from individual CSV files
 for csv_file in os.listdir():
-    if csv_file.startswith("news-") and csv_file.endswith(".csv"):
+    if (csv_file.startswith("news-") and csv_file.endswith(".csv")):
         company_name = csv_file[5:-4]  # Remove "news-" and ".csv"
         try:
             with open(csv_file, 'r', encoding="utf-8") as f:
@@ -118,14 +118,12 @@ html_content = """<!DOCTYPE html>
 # Add each news item to the HTML
 for item in news_items:
     # Convert all values to strings to avoid NoneType errors
+    company = html.escape(str(item.get("company", "")))
     title = html.escape(str(item.get("title", "No title")))
     url = html.escape(str(item.get("url", "#")))
     source = html.escape(str(item.get("source", "Unknown source")))
     body = html.escape(str(item.get("body", "No description available")))
     date = html.escape(str(item.get("date", "")))
-
-    # Get company directly from the company column in the CSV
-    company = str(item.get("company", ""))
     
     # Only add company tag if we found a valid company name
     company_tag = f'<span class="company-tag">{company}</span>' if company else ''
