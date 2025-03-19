@@ -104,7 +104,7 @@ for item in news_items:
     title = html.escape(item.get("title", "No title"))
     url = html.escape(item.get("url", "#"))
     source = html.escape(item.get("source", "Unknown source"))
-    snippet = html.escape(item.get("snippet", "No description available"))
+    body = html.escape(item.get("body", "No description available"))  # Changed from snippet to body
     date = html.escape(item.get("date", ""))
     
     # Determine company by looking at the filename pattern in the CSV
@@ -135,7 +135,7 @@ for item in news_items:
         {company_tag}
         <h3 class="news-title"><a href="{url}" target="_blank">{title}</a></h3>
         <div class="news-source">{source}</div>
-        <p>{snippet}</p>
+        <p>{body}</p>
         <div class="news-date">{date}</div>
     </div>
     """
