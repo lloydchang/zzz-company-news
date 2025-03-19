@@ -124,14 +124,19 @@ for item in news_items:
     source = html.escape(str(item.get("source", "Unknown source")))
     body = html.escape(str(item.get("body", "No description available")))
     date = html.escape(str(item.get("date", "")))
+    image = html.escape(str(item.get("image", "")))
     
     # Only add company tag if we found a valid company name
     company_tag = f'<span class="company-tag">{company}</span>' if company else ''
+    
+    # Add image HTML if an image URL exists
+    image_html = f'<div class="news-image"><img src="{image}" alt="{title}"></div>' if image else ''
     
     html_content += f"""
     <div class="news-card">
         {company_tag}
         <h3 class="news-title"><a href="{url}" target="_blank">{title}</a></h3>
+        {image_html}
         <div class="news-source">{source}</div>
         <p>{body}</p>
         <div class="news-date">{date}</div>
