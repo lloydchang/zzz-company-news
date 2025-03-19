@@ -562,7 +562,16 @@ html_content += f"""
                 addMessage(question, 'user');
                 chatInput.value = '';
                 
-                // Process the query and generate response (RAG)
+                // Check if this is a follow-up response
+                if (handleFollowUp(question)) {{
+                    // If it was handled as a follow-up, we're done
+                    return;
+                }}
+                
+                // Otherwise process as a new query
+                conversationState.currentQuery = question;
+                conversationState.mode = 'showing_results';
+                conversationState.currentArticleIndex = 0;
                 processQuery(question);
             }}
             
@@ -678,7 +687,6 @@ html_content += f"""
                     
                     if (score > 0) {{
                         if (DEBUG) {{
-                            // FIX: Properly escape JavaScript template literals
                             console.log(`Article: ${{article.title}}, Score: ${{score}}`);
                         }}
                         relevantArticles.push({{...article, score}});
@@ -688,10 +696,13 @@ html_content += f"""
                 // Sort by relevance
                 relevantArticles.sort((a, b) => b.score - a.score);
                 
+                // Store in conversation state
+                conversationState.relevantArticles = relevantArticles;
+                conversationState.currentArticleIndex = 0;
+                
                 if (DEBUG) {{
                     console.log('Relevant articles found:', relevantArticles.length);
                     if (relevantArticles.length > 0) {{
-                        // FIX: Properly escape JavaScript template literals
                         console.log('Top article:', relevantArticles[0].title);
                         console.log('Top score:', relevantArticles[0].score);
                     }}
@@ -776,11 +787,65 @@ html_content += f"""
                     if (relevantArticles.length > 1) {{
                         setTimeout(() => {{
                             addMessage(`I also found ${{relevantArticles.length - 1}} more articles that might be relevant. Would you like to know more about any specific topic?`, 'bot');
+                            conversationState.mode = 'offering_more'; // Set mode to offering more articles
                         }}, 1000);
                     }}
                 }} else {{
                     addMessage(`I couldn't find any information about that in the current news articles. Could you try asking something else?`, 'bot');
+                    conversationState.mode = 'initial'; // Reset mode
                 }}
+            }}
+            
+            // Conversation state to track dialogue context
+            const conversationState = {{
+                mode: 'initial', // 'initial', 'showing_results', 'offering_more'
+                currentQuery: '',
+                relevantArticles: [],
+                currentArticleIndex: 0
+            }};
+            
+            // Handle follow-up responses (yes/no)
+            function handleFollowUp(response) {{
+                const lowerResponse = response.toLowerCase().trim();
+                
+                if (conversationState.mode === 'offering_more' && 
+                    (lowerResponse === 'yes' || lowerResponse === 'sure' || 
+                     lowerResponse === 'ok' || lowerResponse.includes('yes'))) {{
+                    
+                    // Show next article from previously found relevant articles
+                    if (conversationState.relevantArticles.length > conversationState.currentArticleIndex + 1) {{
+                        conversationState.currentArticleIndex++;
+                        const nextArticle = conversationState.relevantArticles[conversationState.currentArticleIndex];
+                        
+                        let response = '';
+                        if (nextArticle.full_content) {{
+                            const snippet = nextArticle.full_content.substring(0, 300) + '...';
+                            response = `Here's another relevant article from ${{nextArticle.source}}: "${{snippet}}"`;
+                        }} else {{
+                            response = `Here's another relevant article: "${{nextArticle.title}}". ${{nextArticle.body.substring(0, 150)}}...`;
+                        }}
+                        
+                        addMessageWithCitation(response, `${{nextArticle.source}}, ${{nextArticle.date}} - ${{nextArticle.url}}`);
+                        
+                        // If there are still more articles, offer again
+                        const remaining = conversationState.relevantArticles.length - conversationState.currentArticleIndex - 1;
+                        if (remaining > 0) {{
+                            setTimeout(() => {{
+                                addMessage(`I have ${{remaining}} more articles that might interest you. Would you like to see another one?`, 'bot');
+                                // Stay in offering_more mode
+                            }}, 1000);
+                        }} else {{
+                            setTimeout(() => {{
+                                addMessage(`That's all the relevant articles I found. Is there something else you'd like to know about?`, 'bot');
+                                conversationState.mode = 'initial'; // Reset mode
+                            }}, 1000);
+                        }}
+                        return true; // Handled
+                    }}
+                }}
+                
+                // If response wasn't handled as a follow-up
+                return false;
             }}
             
             // Event listeners for sending messages
