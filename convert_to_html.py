@@ -720,7 +720,7 @@ html_content += f"""
                     const companyExists = exactCompanyMatch !== undefined || validPartialMatch;
                     
                     if (!companyExists) {{
-                        addMessage(`I'm sorry, I don't have any news articles about "$${lowerQuestion}". Would you like information about another company?`, 'bot');
+                        addMessage(`I'm sorry, I don't have any news articles about "${{lowerQuestion}}". Would you like information about another company?`, 'bot');
                         conversationState.mode = 'initial';
                         return;
                     }}
