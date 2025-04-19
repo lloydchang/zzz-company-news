@@ -37,7 +37,6 @@ html_content = """<!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Company News Dashboard</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -264,10 +263,6 @@ html_content = """<!DOCTYPE html>
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>Company News Dashboard</h1>
-    </div>
-    
     <div class="news-grid">
 """
 
