@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source ./venv/bin/activate
+
 # Create header for aggregated CSV with company as first column
 echo "company,date,title,body,url,image,source" > aggregated-news.csv
 
