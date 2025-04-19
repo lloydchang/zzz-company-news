@@ -9,14 +9,11 @@ for company in 'Unaliwear' 'BrainCheck' 'Dermala' 'Oralucent' 'Flowly' 'Rosy' 'D
   # Normal processing with retry
   ddgs news -k "$company company" -m 2 -o "news-$company.csv" || 
   # Retry once if it fails
-  (echo "Retrying $company..." && sleep 5 && ddgs news -k "$company company" -m 2 -o "news-$company.csv")
-  
-  # Check if CSV was created and has content (more than just header)
-  if [ -f "news-$company.csv" ] && [ $(wc -l < "news-$company.csv") -gt 1 ]; then
-    # Skip header row and add company as first column for each row
-    # Properly escape the company name to handle spaces
-    awk -F, -v comp="$company" 'NR>1 {print "\"" comp "\"," $0}' "news-$company.csv" >> aggregated-news.csv
-    echo "Added $company news to aggregated CSV"
+  (echo "Retrying $company..." && sleep 5 && ddgs news -k "$company company" -m 2 -o "news-$company.csv")    # Check if CSV was created and has content (more than just header)
+    if [ -f "news-$company.csv" ] && [ $(wc -l < "news-$company.csv") -gt 1 ]; then
+      # Skip header row and add company as first column for each row using awk with a variable
+      awk -F, -v company="$company" 'NR>1 {printf("\"%s\",%s\n", company, $0)}' "news-$company.csv" >> aggregated-news.csv
+      echo "Added $company news to aggregated CSV"
   else
     echo "Warning: No results for $company or CSV creation failed"
     # Create an empty CSV with just the header to prevent errors
