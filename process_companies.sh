@@ -21,6 +21,8 @@ for company in 'Unaliwear' 'BrainCheck' 'Dermala' 'Oralucent' 'Flowly' 'Rosy' 'D
     # Add a placeholder entry in aggregated CSV
     echo "\"$company\",\"$(date +%Y-%m-%d)\",\"No recent news found for $company\",\"No content available\",\"#\",\"\",\"System\"" >> aggregated-news.csv
   fi
+  # Add a small delay to avoid rate limiting
+  sleep 2
 done
 
 # Show summary

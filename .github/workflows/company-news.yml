@@ -43,7 +43,7 @@ jobs:
             # Check if CSV was created and has content (more than just header)
             if [ -f "news-$company.csv" ] && [ $(wc -l < "news-$company.csv") -gt 1 ]; then
               # Skip header row and add company as first column for each row
-              awk -F, 'NR>1 {print "\"'$company'\","$0}' "news-$company.csv" >> aggregated-news.csv
+              awk -F, -v company="$company" 'NR>1 {printf("\"%s\",%s\n", company, $0)}' "news-$company.csv" >> aggregated-news.csv
               echo "Added $company news to aggregated CSV"
             else
               echo "Warning: No results for $company or CSV creation failed"
