@@ -590,13 +590,9 @@ html_content += f"""
     </div>
     
     <script>
-        // Store news data for the chatbot
         const newsData = {json.dumps(news_data_for_js)};
-        
-        // Debug flag - set to true to see debug info in console
         const DEBUG = true;
         
-        // Chatbot functionality
         document.addEventListener('DOMContentLoaded', () => {{
             const chatToggle = document.querySelector('.chat-toggle-button');
             const chatContainer = document.querySelector('.chatbot-container');
@@ -605,14 +601,12 @@ html_content += f"""
             const sendButton = document.querySelector('.chatbot-input button');
             const messagesContainer = document.querySelector('.chatbot-messages');
             
-            // Automatically open the chatbot on page load
             setTimeout(() => {{
                 chatContainer.classList.add('active');
                 chatToggle.style.display = 'none';
-                chatInput.focus(); // Focus on the input field
-            }}, 1000); // Short delay to ensure page has loaded
+                chatInput.focus();
+            }}, 1000);
             
-            // Toggle chat open/close
             chatToggle.addEventListener('click', () => {{
                 chatContainer.classList.add('active');
                 chatToggle.style.display = 'none';
@@ -622,33 +616,27 @@ html_content += f"""
             closeChat.addEventListener('click', () => {{
                 chatContainer.classList.remove('active');
                 setTimeout(() => {{
-                    chatToggle.style.display = 'flex'; // Show toggle button after transition
+                    chatToggle.style.display = 'flex';
                 }}, 300);
             }});
             
-            // Send message function
             function sendMessage() {{
                 const question = chatInput.value.trim();
                 if (!question) return;
                 
-                // Add user message to chat
                 addMessage(question, 'user');
                 chatInput.value = '';
                 
-                // Check if this is a follow-up response
                 if (handleFollowUp(question)) {{
-                    // If it was handled as a follow-up, we're done
                     return;
                 }}
                 
-                // Otherwise process as a new query
                 conversationState.currentQuery = question;
                 conversationState.mode = 'showing_results';
                 conversationState.currentArticleIndex = 0;
                 processQuery(question);
             }}
             
-            // Add message to chat
             function addMessage(text, sender) {{
                 const message = document.createElement('div');
                 message.classList.add('message');
@@ -658,7 +646,6 @@ html_content += f"""
                 messagesContainer.scrollTop = messagesContainer.scrollHeight;
             }}
             
-            // Add message with citation
             function addMessageWithCitation(text, citation) {{
                 const messageContainer = document.createElement('div');
                 
@@ -677,9 +664,7 @@ html_content += f"""
                 messagesContainer.scrollTop = messagesContainer.scrollHeight;
             }}
             
-            // Enhanced RAG implementation with full content
             function processQuery(question) {{
-                // Convert question to lowercase for case-insensitive matching
                 const lowerQuestion = question.toLowerCase();
                 
                 if (DEBUG) {{
@@ -730,30 +715,25 @@ html_content += f"""
                         }}
                         
                         return false;
-                    });
+                    }});
                     
-                    // Only consider it a company match if exact or valid partial match
                     const companyExists = exactCompanyMatch !== undefined || validPartialMatch;
                     
                     if (!companyExists) {{
-                        // If we're searching for a specific company and it doesn't exist in our data
                         addMessage(`I'm sorry, I don't have any news articles about "${question}". Would you like information about another company?`, 'bot');
                         conversationState.mode = 'initial';
-                        return; // Exit early, don't search for partial matches
+                        return;
                     }}
                 }}
                 
-                // Improved keyword extraction
                 let keywords = [];
                 
-                // First extract quoted phrases
                 const quoteRegex = /"([^"]+)"/g;
                 let quoteMatch;
                 while ((quoteMatch = quoteRegex.exec(question)) !== null) {{
                     keywords.push(quoteMatch[1].toLowerCase());
                 }}
                 
-                // Then extract individual important words (excluding common stop words)
                 const stopWords = new Set([
                     'a', 'an', 'the', 'and', 'or', 'but', 'is', 'are', 'was', 'were', 
                     'to', 'of', 'in', 'on', 'at', 'by', 'for', 'with', 'about', 'from',
@@ -772,7 +752,6 @@ html_content += f"""
                     console.log('Extracted keywords:', keywords);
                 }}
                 
-                // Search for relevant articles
                 let relevantArticles = [];
                 newsData.forEach(article => {{
                     let score = 0;
@@ -781,22 +760,19 @@ html_content += f"""
                     const fullContent = article.full_content ? article.full_content.toLowerCase() : '';
                     const company = article.company.toLowerCase();
                     
-                    // Direct company name match in query - highest priority
                     if (company && lowerQuestion.includes(company)) {{
-                        score += 15; // Highest boost for company name match in question
+                        score += 15;
                     }}
                     
-                    // Exact match for company name - highest priority (added fix)
                     if (company && lowerQuestion.trim() === company) {{
-                        score += 30; // Super high boost for exact company name match
+                        score += 30;
                     }}
                     
-                    // Prioritize company names that start with the same phrase (added fix)
                     if (company && lowerQuestion.trim().startsWith(company)) {{
-                        score += 25; // Very high priority for company name at start
+                        score += 25;
                     }}
                     if (company && company.startsWith(lowerQuestion.trim())) {{
-                        score += 20; // High priority if company starts with query
+                        score += 20;
                     }}
                     
                     if (isCompanyQuery && company && !company.includes(lowerQuestion) && !lowerQuestion.includes(company)) {{
@@ -804,26 +780,23 @@ html_content += f"""
                         const queryFirstWord = lowerQuestion.trim().split(' ')[0].toLowerCase();
                         
                         if (companyFirstWord !== queryFirstWord) {{
-                            score -= 50; // Strong penalty for different company first words
+                            score -= 50;
                         }}
                     }}
                     
-                    // Check for direct question matches in content
                     if (fullContent && fullContent.includes(lowerQuestion)) {{
-                        score += 10; // Large boost for exact question match
+                        score += 10;
                     }}
                     
-                    // Check if keywords are in title, body or full content
                     keywords.forEach(keyword => {{
-                        // Check for company name match with keywords
                         if (company && keyword.length > 2 && company === keyword) {{
-                            score += 18; // Extremely high boost for exact keyword match
+                            score += 18;
                         }}
                         else if (company && keyword.length > 2 && company.includes(keyword)) {{
-                            score += 5; // Reduced from 12 to 5 - partial matches shouldn't be weighted too heavily
+                            score += 5;
                         }}
                         if (company && keyword.length > 2 && keyword.includes(company)) {{
-                            score += 10; // Boost if keyword contains company name
+                            score += 10;
                         }}
                         
                         if (title.includes(keyword)) score += 5;
@@ -856,10 +829,8 @@ html_content += f"""
                     }}
                 }});
                 
-                // Sort by relevance
                 relevantArticles.sort((a, b) => b.score - a.score);
                 
-                // Store in conversation state
                 conversationState.relevantArticles = relevantArticles;
                 conversationState.currentArticleIndex = 0;
                 
@@ -871,12 +842,10 @@ html_content += f"""
                     }}
                 }}
                 
-                // Generate response based on findings
                 if (relevantArticles.length > 0) {{
                     const mostRelevant = relevantArticles[0];
                     let response = "";
                     
-                    // Extract the most relevant snippet from full content if available
                     let informativeSnippet = '';
                     if (mostRelevant.full_content) {{
                         const fullContent = mostRelevant.full_content;
@@ -896,7 +865,6 @@ html_content += f"""
                             }}
                         }}
                         
-                        // If no multi-keyword paragraph, look for any keyword match
                         if (!foundRelevantSnippet) {{
                             for (const paragraph of paragraphs) {{
                                 if (keywords.some(keyword => paragraph.toLowerCase().includes(keyword))) {{
@@ -944,19 +912,17 @@ html_content += f"""
                     }}
                 }} else {{
                     addMessage(`I couldn't find any information about that in the current news articles. Could you try asking something else?`, 'bot');
-                    conversationState.mode = 'initial'; // Reset mode
+                    conversationState.mode = 'initial';
                 }}
             }}
             
-            // Conversation state to track dialogue context
             const conversationState = {{
-                mode: 'initial', // 'initial', 'showing_results', 'offering_more'
+                mode: 'initial',
                 currentQuery: '',
                 relevantArticles: [],
                 currentArticleIndex: 0
             }};
             
-            // Handle follow-up responses (yes/no)
             function handleFollowUp(response) {{
                 const lowerResponse = response.toLowerCase().trim();
                 
@@ -964,7 +930,6 @@ html_content += f"""
                     (lowerResponse === 'yes' || lowerResponse === 'sure' || 
                      lowerResponse === 'ok' || lowerResponse.includes('yes'))) {{
                     
-                    // Show next article from previously found relevant articles
                     if (conversationState.relevantArticles.length > conversationState.currentArticleIndex + 1) {{
                         conversationState.currentArticleIndex++;
                         const nextArticle = conversationState.relevantArticles[conversationState.currentArticleIndex];
@@ -979,38 +944,32 @@ html_content += f"""
                         
                         addMessageWithCitation(response, `${{nextArticle.source}}, ${{nextArticle.date}} - ${{nextArticle.url}}`);
                         
-                        // If there are still more articles, offer again
                         const remaining = conversationState.relevantArticles.length - conversationState.currentArticleIndex - 1;
                         if (remaining > 0) {{
                             setTimeout(() => {{
                                 addMessage(`I have ${{remaining}} more articles that might interest you. Would you like to see another one?`, 'bot');
-                                // Stay in offering_more mode
                             }}, 1000);
                         }} else {{
                             setTimeout(() => {{
                                 addMessage(`That's all the relevant articles I found. Is there something else you'd like to know about?`, 'bot');
-                                conversationState.mode = 'initial'; // Reset mode
+                                conversationState.mode = 'initial';
                             }}, 1000);
                         }}
-                        return true; // Handled
+                        return true;
                     }}
                 }}
                 
-                // If response wasn't handled as a follow-up
                 return false;
             }}
             
-            // Event listeners for sending messages
             sendButton.addEventListener('click', sendMessage);
             chatInput.addEventListener('keypress', (e) => {{
                 if (e.key === 'Enter') sendMessage();
             }});
             
-            // Make sure chat toggle is visible on page load
-            chatToggle.style.display = 'none'; // Keep it hidden since we're auto-opening
+            chatToggle.style.display = 'none';
             chatToggle.style.opacity = '1';
             
-            // Add a timeout to make the chatbot button pulse after a short delay
             setTimeout(() => {{
                 chatToggle.classList.add('attention');
             }}, 2000);
