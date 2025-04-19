@@ -708,35 +708,35 @@ html_content += f"""
                         const companyWords = company.toLowerCase().split(/\\s+/);
                         const queryWords = lowerQuestion.toLowerCase().trim().split(/\\s+/);
                         
-                        /* Exact match */
+                        // Exact match
                         if (company.toLowerCase() === lowerQuestion.toLowerCase().trim()) {
                             return true;
                         }
                         
-                        /* Only consider it a match if:
-                           1. Company fully contains the query as a complete phrase */
+                        // Only consider it a match if:
+                        // 1. Company fully contains the query as a complete phrase
                         if (company.toLowerCase().includes(lowerQuestion.toLowerCase().trim())) {
                             return true;
                         }
                         
-                        /* 2. Query fully contains the company name as a complete phrase */
+                        // 2. Query fully contains the company name as a complete phrase
                         if (lowerQuestion.toLowerCase().trim().includes(company.toLowerCase())) {
                             return true;
                         }
                         
-                        /* 3. For multi-word company names, require matching at least 2 words in sequence
-                           or the first word exactly (for distinctive first words) */
+                        // 3. For multi-word company names, require matching at least 2 words in sequence
+                        // or the first word exactly (for distinctive first words)
                         if (companyWords.length > 1) {
-                            /* Check if first word matches exactly (like "Partum" in "Partum Health") */
+                            // Check if first word matches exactly (like "Partum" in "Partum Health")
                             if (queryWords.includes(companyWords[0]) && companyWords[0].length > 3) {
                                 return true;
                             }
                             
-                            /* Check for 2+ consecutive words matching */
+                            // Check for 2+ consecutive words matching
                             const companyPhrase = companyWords.join(' ');
                             const queryPhrase = queryWords.join(' ');
                             
-                            /* Find any 2-word phrases that match */
+                            // Find any 2-word phrases that match
                             for (let i = 0; i < companyWords.length - 1; i++) {
                                 const phrase = companyWords[i] + ' ' + companyWords[i+1];
                                 if (queryPhrase.includes(phrase)) {
