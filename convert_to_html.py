@@ -617,6 +617,78 @@ html_content += f"""
                     console.log('Available articles:', newsData.length);
                 }}
                 
+                // Check if it's a direct company name query
+                const isCompanyQuery = lowerQuestion.split(' ').length <= 3;
+                
+                // First check if the query is just a company name, and if that company exists in our data
+                if (isCompanyQuery) {{
+                    // Get a list of all unique company names in our data
+                    const allCompanies = [...new Set(newsData.map(article => article.company.toLowerCase()))];
+                    console.log('All companies:', allCompanies);
+                    
+                    // Check if any company exactly matches the query
+                    const exactCompanyMatch = allCompanies.find(company => 
+                        company.toLowerCase() === lowerQuestion.trim()
+                    );
+                    
+                    // Check for partial but valid company name matches (exact word boundaries)
+                    // This prevents "Partum Health" from matching with "Fort Health" just because both have "Health"
+                    const validPartialMatch = allCompanies.some(company => {
+                        // Split both into words and check for substantial overlap
+                        const companyWords = company.toLowerCase().split(/\s+/);
+                        const queryWords = lowerQuestion.toLowerCase().trim().split(/\s+/);
+                        
+                        // Exact match
+                        if (company.toLowerCase() === lowerQuestion.toLowerCase().trim()) {
+                            return true;
+                        }
+                        
+                        // Only consider it a match if:
+                        // 1. Company fully contains the query as a complete phrase
+                        if (company.toLowerCase().includes(lowerQuestion.toLowerCase().trim())) {
+                            return true;
+                        }
+                        
+                        // 2. Query fully contains the company name as a complete phrase
+                        if (lowerQuestion.toLowerCase().trim().includes(company.toLowerCase())) {
+                            return true;
+                        }
+                        
+                        // 3. For multi-word company names, require matching at least 2 words in sequence
+                        // or the first word exactly (for distinctive first words)
+                        if (companyWords.length > 1) {
+                            // Check if first word matches exactly (like "Partum" in "Partum Health")
+                            if (queryWords.includes(companyWords[0]) && companyWords[0].length > 3) {
+                                return true;
+                            }
+                            
+                            // Check for 2+ consecutive words matching
+                            const companyPhrase = companyWords.join(' ');
+                            const queryPhrase = queryWords.join(' ');
+                            
+                            // Find any 2-word phrases that match
+                            for (let i = 0; i < companyWords.length - 1; i++) {
+                                const phrase = companyWords[i] + ' ' + companyWords[i+1];
+                                if (queryPhrase.includes(phrase)) {
+                                    return true;
+                                }
+                            }
+                        }
+                        
+                        return false;
+                    });
+                    
+                    // Only consider it a company match if exact or valid partial match
+                    const companyExists = exactCompanyMatch !== undefined || validPartialMatch;
+                    
+                    if (!companyExists) {{
+                        // If we're searching for a specific company and it doesn't exist in our data
+                        addMessage(`I'm sorry, I don't have any news articles about "${question}". Would you like information about another company?`, 'bot');
+                        conversationState.mode = 'initial';
+                        return; // Exit early, don't search for partial matches
+                    }}
+                }}
+                
                 // Improved keyword extraction
                 let keywords = [];
                 
@@ -671,6 +743,18 @@ html_content += f"""
                     }}
                     if (company && company.startsWith(lowerQuestion.trim())) {{
                         score += 20; // High priority if company starts with query
+                    }}
+                    
+                    // IMPORTANT FIX: Penalize different company matches when searching for a specific company
+                    // This prevents "Fort Health" from matching when searching for "Partum Health"
+                    if (isCompanyQuery && company && !company.includes(lowerQuestion) && !lowerQuestion.includes(company)) {{
+                        // Check if first words match - if they don't, heavily penalize
+                        const companyFirstWord = company.split(' ')[0].toLowerCase();
+                        const queryFirstWord = lowerQuestion.trim().split(' ')[0].toLowerCase();
+                        
+                        if (companyFirstWord !== queryFirstWord) {{
+                            score -= 50; // Strong penalty for different company first words
+                        }}
                     }}
                     
                     // Check for direct question matches in content
