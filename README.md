@@ -1,4 +1,4 @@
-Aggregate public news about 10+ private companies
+Aggregate public news about private companies
 
 ![Company News Dashboard](https://github.com/user-attachments/assets/7a8b4773-d993-48a8-963d-4908d9d94302)
 
