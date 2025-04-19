@@ -15,7 +15,7 @@ for company in 'Unaliwear' 'BrainCheck' 'Dermala' 'Oralucent' 'Flowly' 'Rosy' 'D
   if [ -f "news-$company.csv" ] && [ $(wc -l < "news-$company.csv") -gt 1 ]; then
     # Skip header row and add company as first column for each row
     # Properly escape the company name to handle spaces
-    awk -F, 'NR>1 {print "\"'"$company"'\","$0}' "news-$company.csv" >> aggregated-news.csv
+    awk -F, -v comp="$company" 'NR>1 {print "\"" comp "\"," $0}' "news-$company.csv" >> aggregated-news.csv
     echo "Added $company news to aggregated CSV"
   else
     echo "Warning: No results for $company or CSV creation failed"
