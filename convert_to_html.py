@@ -701,10 +701,10 @@ html_content += f"""
                         company.toLowerCase() === lowerQuestion.trim()
                     );
                     
-                    /* Check for partial but valid company name matches (exact word boundaries)
-                       This prevents "Partum Health" from matching with "Fort Health" just because both have "Health" */
+                    // Check for partial but valid company name matches (exact word boundaries)
+                    // This prevents "Partum Health" from matching with "Fort Health" just because both have "Health"
                     const validPartialMatch = allCompanies.some(company => {
-                        /* Split both into words and check for substantial overlap */
+                        // Split both into words and check for substantial overlap
                         const companyWords = company.toLowerCase().split(/\\s+/);
                         const queryWords = lowerQuestion.toLowerCase().trim().split(/\\s+/);
                         
