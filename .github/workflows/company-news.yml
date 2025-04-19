@@ -33,21 +33,12 @@ jobs:
           echo "company,date,title,body,url,image,source" > aggregated-news.csv
           
           # Process companies and append to CSV
-          for company in "SpaceX" "ByteDance" "OpenAI" "Stripe" "SHEIN" "Databricks" "Anthropic" "xAI" "Revolut" "Canva"; do
+          for company in "Unaliwear" "BrainCheck" "Dermala" "Oralucent" "Flowly" "Rosy" "De Oro Devices" "Partum Health" "Fort Health" "RubyWell" "Atlantic Sea Farms" "VidaFuel"; do
             echo "Processing $company..."
-            # Add retry logic and more specific search terms for certain companies
-            if [ "$company" == "OpenAI" ]; then
-              echo "Using special handling for OpenAI..."
-              # Try with different search terms
-              ddgs news -k "OpenAI ChatGPT" -m 2 -o "news-$company.csv" || 
-              ddgs news -k "OpenAI company" -m 2 -o "news-$company.csv" ||
-              ddgs news -k "Sam Altman OpenAI" -m 2 -o "news-$company.csv"
-            else
-              # Normal processing with retry
-              ddgs news -k "$company" -m 2 -o "news-$company.csv" || 
-              # Retry once if it fails
-              (echo "Retrying $company..." && sleep 5 && ddgs news -k "$company" -m 2 -o "news-$company.csv")
-            fi
+            # Normal processing with retry
+            ddgs news -k "$company company" -m 2 -o "news-$company.csv" || 
+            # Retry once if it fails
+            (echo "Retrying $company..." && sleep 5 && ddgs news -k "$company company" -m 2 -o "news-$company.csv")
             
             # Check if CSV was created and has content (more than just header)
             if [ -f "news-$company.csv" ] && [ $(wc -l < "news-$company.csv") -gt 1 ]; then
