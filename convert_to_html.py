@@ -29,7 +29,7 @@ for csv_file in os.listdir():
                     if "title" in row:
                         company_mapping[row["title"]] = company_name
         except Exception as e:
-                              let response = '';
+                        let response = '';
                         if (nextArticle.full_content) {
                             const snippet = nextArticle.full_content.substring(0, 300) + '...';
                             response = `Here's another relevant article from ${nextArticle.source}: "${snippet}"`;
