@@ -96,10 +96,10 @@
         /* Chatbot styles */
         .chatbot-container {
             position: fixed;
-            top: 20px;
+            top: 20px; /* Changed from bottom to top */
             right: 20px;
             width: 350px;
-            height: calc(100vh - 40px);
+            height: calc(100vh - 40px); /* Changed to take up almost full viewport height */
             background-color: white;
             border-radius: 10px;
             box-shadow: 0 5px 25px rgba(0,0,0,0.2);
@@ -107,13 +107,13 @@
             flex-direction: column;
             z-index: 1000;
             transition: transform 0.3s ease, opacity 0.3s ease;
-            transform: translateX(110%);
+            transform: translateX(110%); /* Changed from translateY to translateX */
             opacity: 0;
-            overflow: hidden;
+            overflow: hidden; /* Added to ensure no overflow */
         }
         
         .chatbot-container.active {
-            transform: translateX(0);
+            transform: translateX(0); /* Changed from translateY to translateX */
             opacity: 1;
         }
         
@@ -138,7 +138,7 @@
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            max-height: calc(100vh - 140px);
+            max-height: calc(100vh - 140px); /* Added to ensure scrolling works properly */
         }
         
         .message {
@@ -194,7 +194,7 @@
             color: white;
             border: none;
             border-radius: 50%;
-            display: none;
+            display: none; /* Changed from flex to none to hide initially */
             justify-content: center;
             align-items: center;
             font-size: 24px;
@@ -205,6 +205,7 @@
             visibility: visible;
         }
         
+        /* Adding a pulsing animation to make the chat button more noticeable */
         @keyframes pulse {
             0% { transform: scale(1); box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
             50% { transform: scale(1.05); box-shadow: 0 8px 16px rgba(0,0,0,0.3); }
@@ -305,10 +306,10 @@
     <div class="news-card">
         <span class="company-tag">Fort Health</span>
         
-        <h3 class="news-title">No news</h3>
-        <div class="news-source"></div>
-        <p></p>
-        
+        <h3 class="news-title"><a href="https://finance.yahoo.com/news/fort-health-partners-colleva-train-130000158.html" target="_blank">Fort Health Partners with Colleva to Train its Therapists with AI Patient Avatars for Role-Playing Practice and Scalable Client Care</a></h3>
+        <div class="news-source">Yahoo Finance</div>
+        <p>How it Works Using Fort Health&#x27;s agentic AI training platform - which is modeled on the evidence-based treatment protocol, the Unified Protocol for children, adolescents, and caregivers ...</p>
+        <div class="news-date">2025-03-18T09:00:00+00:00</div>
     </div>
     
     <div class="news-card">
@@ -339,6 +340,411 @@
     </div>
     
     </div>
-    <p class="timestamp">Last updated: 2025-04-19T19:10:15.209920+00:00</p>
+    <p class="timestamp">Last updated: 2025-04-19T21:25:19.258187+00:00</p>
+    
+    <!-- Chatbot UI - Added title attribute and more visible text -->
+    <button class="chat-toggle-button" title="Open Chat Assistant">💬</button>
+    <div class="chatbot-container">
+        <div class="chatbot-header">
+            <span class="chatbot-title">News Assistant</span>
+            <span class="close-chat" style="cursor: pointer;">✕</span>
+        </div>
+        <div class="chatbot-messages">
+            <div class="message bot-message">
+                Hi! I'm your news assistant. Ask me anything about the news articles on this page.
+            </div>
+        </div>
+        <div class="chatbot-input">
+            <input type="text" placeholder="Ask a question...">
+            <button>Send</button>
+        </div>
+    </div>
+    
+    <script>
+        const newsData = [{"company": "Unaliwear", "title": "UnaliWear Kanega Watch Reviews", "url": "https://www.consumeraffairs.com/medical-alert-systems/unaliwear-kanega-watch.html", "source": "ConsumerAffairs", "body": "If any issues come up, UnaliWear will replace the watch for free. The company also covers replacement and shipping at no cost the first time you break the watch. Be aware that UnaliWear does not ...", "date": "2025-03-24T00:01:00+00:00", "full_content": "Our Buyers Guide Top Picks\n\nThe UnaliWear Kanega Watch is a more discreet alternative to traditional medical alert devices. The watch weighs 49 grams (about 1.7 ounces). It\u2019s 1.6 inches in diameter and 0.5 inches thick. It comes with a patented quick-swap battery, so you never have to take it off to charge.\n\nThe UnaliWear Kanega Watch is a stand-alone personal emergency response device, so you don\u2019t need a landline or cellphone to make it work. Instead, it relies on Verizon\u2019s nationwide cellular network. The watch connects to your home Wi-Fi but automatically switches to Verizon\u2019s network when you leave your home.\n\nYou can call for help in multiple ways. If you press and hold the button on the right side of the watch (called the crown button) for a couple of seconds, you\u2019ll be connected to the monitoring center. These trained professionals have your contact information and the names of your caregivers and know exactly whom to notify and where to dispatch help.\n\nYou can also use voice commands through the watch\u2019s built-in microphone. Finally, if you fall, the watch automatically detects the unusual movement and notifies the monitors.\n\nUnaliWear offers two different pricing structures for the Kanega Watch. You can make an upfront payment for the whole year, or you can pay monthly from the start. No matter how you pay, you have a one-time setup fee.\n\nAs of publishing, if you choose to pay monthly from the start, your one-time setup fee is $299. Then, you\u2019ll pay $69.95 a month for monitoring services.\n\nThere\u2019s no contract with either payment structure, so you can cancel the service anytime. But note that the watch and the accessories aren\u2019t yours to keep. You have to return everything in good condition if you cancel the monitoring service.\n\nDesigned with an older user in mind, the UnaliWear Kanega Watch has many features to help improve independence, including:\n\nCompare UnaliWear with othermedical alert companies.\n\nThe company name comes from the Cherokee words \u201cUnalii,\u201d which means friend, and \u201cKanega,\u201d which means speak. When you put them together, you have a friend who speaks to you.\n\nUnaliWear covers defects in materials and workmanship for as long as you have it, as long as you are current on your service payments. If any issues come up, UnaliWear will replace the watch for free.\n\nThe company also covers replacement and shipping at no cost the first time you break the watch. Be aware that UnaliWear does not cover replacement of a watch in all circumstances.\n\nAfter 30 days, you can cancel the service at any time as long as you return all equipment. You\u2019ll get a refund (minus a $75 restocking fee) if all equipment is returned in good condition. Annual plans will be issued a prorated refund based on the nondiscounted monthly rate of $69.95.\n\nTo cancel your monitoring service through UnaliWear, you need to call the company\u2019s customer support team. As a part of the cancellation, you must send the equipment back in good condition. A lost or damaged watch results in a fee of up to $650.\n\nThe company\u2019s headquarters is in Austin, Texas.\n\nUnaliWear helps vulnerable people enjoy more independence through its medical alert technology. The stylish Kanega Watch includes 24/7 U.S.-based monitoring, fall detection, medication reminders and a 30-day money-back guarantee. Since the watch uses Wi-Fi and LTE technologies, wearers don\u2019t need a landline to access help. In addition, UnaliWear doesn\u2019t require a long-term contract.\n\nShop with confidence\n\nCompare with top companies\n\nFilter by Rating\n\nPopular Mentions\n\nA link has directed you to this review. Its location on this page may change next time you visit.\n\nReviewed Sept. 17, 2024\n\nThe Kanega Watch has been a lifesaver for my grandma (and mom!). My grandma lives independently and is able to continue to do so because the Kanega provides round the clock coverage in the case of an emergency. And even better, my mom can rest easy, knowing she's safe. We chose the Kanega because the 24/7 monitoring service already knows who she is when an alert comes from the watch. After doing so much research online, we found that the Kanega's coverage and service was far superior to others on the market. Totally worth the price!\n\nReviewed March 12, 2024\n\nI bought this watch for my mother in December 2023. Two months later the screen went blank and it was not usable. I made several calls and wrote emails to the company's customer service department. The calls repeatedly were answered by the \"overflow\" service department, which was not qualified to actually troubleshoot problems. After a week of no response on how to fix the watch, I returned it. If you want a watch that detects falls and will notify emergency services, I would suggest an Apple Watch. The Apple Watch does everything the Kanega does and more, and it costs less.\n\nThanks for subscribing.\n\nYou have successfully subscribed to our newsletter! Enjoy reading our tips and recommendations.\n\nReviewed Feb. 17, 2024\n\nThe watch band was too large even though the wrist measured within the range for small. And the watch was heavy, too heavy for a small person to sleep when wearing. This may work better for larger folks, but if you're small, I would not recommend it. The $75 return fee is very steep and you need to go through customer service, which tries and tries to change your mind, to return it.\n\nReviewed Nov. 15, 2023\n\nWe got the Kanega Watch for my father several years ago. He loves it and he wears it all the time, which is the total point. The fall detection has worked as advertised, and he enjoys asking his watch for the time and date. Tremendous peace of mind for him and our whole family. I highly recommend!\n\nReviewed Oct. 22, 2023\n\nI purchased the watch on 9/6/2023, I received it around 9/11/2023. I lost a battery out of it on 10/2/2023, I had no idea how I lost it. Now on 10/22/2023 the watch band has broken where it attaches with the battery to watch. Very unhappy with the construction as I bought a battery for about $36 plus shipping about 3 weeks after purchase and now about 6 weeks later it is broken. I am emailing the company today to see what they will do about this situation. I paid $918.40. I would expect a better quality.\n\nReviewed Sept. 16, 2023\n\nThe service is great. There is very little set up and it is very easy to do. Once we received the watch there were 3 very short videos to watch and then you call the center and they do a test call with you. My Aunt loves the device because it isn't a pendant that gets in the way, flops around or looks out of place when she dresses up and goes out. She also likes the fact that she never has to take it off and can wear it in the shower.\n\nOur only complaint is that after only 3 months the first watch band broke where the battery goes in. We didn't realize it cracked and one battery was lost and then the band broke all together. I believe that a more rubberized battery chamber would be a better housing for the battery. The other disappointment was we had to pay $50 for shipping for a new watch. This seems a bit steep. We haven't found anything better at this time but the shipping cost did cause the luster of this product to dull somewhat.\n\nCheck out our buyers guide top picks\n\nOur Buyers Guide Top Picks:", "extraction_status": "success"}, {"company": "BrainCheck", "title": "An artificial womb for preemies? Philly company gets $50 million to pursue", "url": "https://www.msn.com/en-us/health/medical/an-artificial-womb-for-preemies-philly-company-gets-50-million-to-pursue/ar-AA1vfoIe", "source": "Philadelphia Inquirer", "body": "Vitara also has a new CEO: Kim Rodriguez, who brings more than 20 years of experience in the field, most recently as CEO of BrainCheck, a company that provides tools for brain health. According to ...", "date": "2024-12-04T10:26:00+00:00", "full_content": "Note: Content could not be properly extracted from this source. Using summary instead.\n\nVitara also has a new CEO: Kim Rodriguez, who brings more than 20 years of experience in the field, most recently as CEO of BrainCheck, a company that provides tools for brain health. According to ...", "extraction_status": "content_too_short"}, {"company": "Dermala", "title": "No news", "url": "", "source": "", "body": "", "date": "2025-04-19", "full_content": "", "extraction_status": "not_attempted"}, {"company": "Oralucent", "title": "No news", "url": "", "source": "", "body": "", "date": "2025-04-19", "full_content": "", "extraction_status": "not_attempted"}, {"company": "Flowly", "title": "No news", "url": "", "source": "", "body": "", "date": "2025-04-19", "full_content": "", "extraction_status": "not_attempted"}, {"company": "Rosy Wellness", "title": "No news", "url": "", "source": "", "body": "", "date": "2025-04-19", "full_content": "", "extraction_status": "not_attempted"}, {"company": "De Oro Devices", "title": "No news", "url": "", "source": "", "body": "", "date": "2025-04-19", "full_content": "", "extraction_status": "not_attempted"}, {"company": "Partum Health", "title": "No news", "url": "", "source": "", "body": "", "date": "2025-04-19", "full_content": "", "extraction_status": "not_attempted"}, {"company": "Fort Health", "title": "Fort Health Partners with Colleva to Train its Therapists with AI Patient Avatars for Role-Playing Practice and Scalable Client Care", "url": "https://finance.yahoo.com/news/fort-health-partners-colleva-train-130000158.html", "source": "Yahoo Finance", "body": "How it Works Using Fort Health's agentic AI training platform - which is modeled on the evidence-based treatment protocol, the Unified Protocol for children, adolescents, and caregivers ...", "date": "2025-03-18T09:00:00+00:00", "full_content": "Unlock stock picks and a broker-level newsfeed that powers Wall Street.\n\nAgentic AI Custom Training Scenarios Result in 83% of Clinicians Feeling More Prepared and 95% Able to Apply What They Have Learned\n\nNEW YORK,March 18, 2025/PRNewswire/ -- The high stakes nature of youth mental health therapy requires thorough preparation and applied evidence-based skills. Today,Fort Health, a specialty outpatient pediatric mental health provider, announced that it has partnered withCollevato train its therapists with AI avatar-led, face-to-face simulations. By providing highly relevant and engaging customized scenarios, Fort Health is able to rapidly upskill its therapists using evidence-based therapeutic protocols, ultimately leading to improved client care and operational efficiency. The initial series of custom training scenarios resulted in 83% of clinicians feeling more prepared and 95% able to apply what they have learned.\n\nAbody of researchfrom the National Institute of Medicine shows that current efforts to train clinicians in empirically-based treatments (EBTs) face significant challenges, as they typically provide only didactic training with no examination of applied skills, follow-up support, or implementation feedback. Studies emphasize the importance of role-play skill practice and ongoing expert guidance to ensure clinicians maintain high fidelity to EBT protocols and deliver effective interventions to patients. Compounded by thebehavioral health care workforce shortage,these limitations underscore the need for innovative training approaches to address challenges in a cost-effective and scalable manner.\n\n\"AI-powered avatar simulations are revolutionizing therapist training by enabling immersive, risk-free practice of critical decision-making and patient interactions,\" saidNatalie Schneider, founding CEO of Fort Health. \"Colleva's AI coaching platform empowers us to design tailored, dynamic scenarios that mirror real-world challenges, providing therapists with hands-on experience in applying evidence-based treatment protocols. By leveraging AI patient avatars, we are transforming mental health training\u2014making it more proactive, personalized, and scalable to meet the growing demand for high-quality care.\"\n\nHow it Works\n\nUsing Fort Health's agentic AI training platform \u2013 which is modeled on the evidence-based treatment protocol, the Unified Protocol for children, adolescents, and caregivers \u2013 therapists conduct realistic role plays with custom avatars and receive personalized feedback to identify areas for improvement and highlight strengths. The series of interactive scenarios are a safe space to practice and develop therapeutic techniques. To help therapists build and demonstrate their proficiency, there are three scenarios representative of the patient population that Fort Health treats. Each of the scenario's avatars have six personalities to choose from, allowing for more realistic and varied practice. Each custom simulation uses generative AI to analyze both content and delivery. Personalized feedback is based on specific EBT objectives and CBT competency frameworks. Therapists are also provided instant feedback on soft skill competencies important to successful therapy outcomes.\n\n\"We are harnessing AI not to replace human therapists, but to make them more effective,\" saidMichael Palys, co-founder and president of Colleva. \"It's been wonderful working in partnership with the Fort Health team as they share our collective vision of using AI role plays and simulations to enhance human skills in areas like mental health where these skills are so critically important to successful patient outcomes. The ability to offer personalized 1:1 feedback at scale is a game changer. My father's own career in psychiatry has made this particular project very special to me, and it's been wonderful to see the excitement among practitioners.\"\n\n\"As a therapist, I know how challenging it can be to translate the professional training we receive into real life interactions with children and families. I also know how uncomfortable and anxiety provoking it can be for a therapist to participate in role plays or live observations. Having a private, safe space to fumble and trip as you sharpen your skill set is a game changer for most therapists,\" saidLindsay Henderson, PsyD, founding clinical director, Fort Health. \"Utilizing AI simulations as a training platform to increase therapist's ability to deliver EBT at a higher fidelity will be key to solving for our nation's youth mental health needs.\"\n\n\"What a unique training opportunity! It allows me to practice and improve my clinical skills in a way I've never before experienced. I love getting immediate feedback which I can implement in real time,\" said Licensed Professional Counselor Catherine Murray.\n\nAbout Fort Health\n\nFounded in 2022, Fort Health is a specialty outpatient pediatric mental health provider. Fort Health transforms how children and adolescents, ages 4-24, receive mental health care by seamlessly partnering with pediatricians to provide evidence-based therapy, psychiatry, and parent coaching \u2013 all covered by insurance. Fort Health was built in partnership with the Child Mind Institute, an independent non-profit dedicated to transforming the lives of children and families struggling with mental health, mental illness and learning disorders. The company operates inNew Jersey,New York,Pennsylvania, andTexasandIllinois. VisitFort Healthon our website and onLinkedIn.\n\nAbout Colleva\n\nFounded in 2023, Colleva is an AI-powered enterprise talent platform that can help professionals enhance both hard and soft skills through personalized, scalable 1:1 feedback. Using AI avatars to provide AI roleplay and simulation-based training, Colleva provides immersive practice environments where professionals master critical interactions with immediate feedback. Colleva offers solutions across talent acquisition, onboarding, learning & development, performance management, and employee insights for organizations within healthcare, financial services, as well as other sectors. Headquartered inGreenwich, Connecticut, Colleva is transforming workforces through innovative AI solutions. Visit Colleva on our website and on LinkedIn.\n\nView original content to download multimedia:https://www.prnewswire.com/news-releases/fort-health-partners-with-colleva-to-train-its-therapists-with-ai-patient-avatars-for-role-playing-practice-and-scalable-client-care-302402020.html\n\nSOURCE Fort Health", "extraction_status": "cached"}, {"company": "RubyWell", "title": "No news", "url": "", "source": "", "body": "", "date": "2025-04-19", "full_content": "", "extraction_status": "not_attempted"}, {"company": "Atlantic Sea Farms", "title": "No news", "url": "", "source": "", "body": "", "date": "2025-04-19", "full_content": "", "extraction_status": "not_attempted"}, {"company": "VidaFuel", "title": "No news", "url": "", "source": "", "body": "", "date": "2025-04-19", "full_content": "", "extraction_status": "not_attempted"}];
+        const DEBUG = true;
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            const chatToggle = document.querySelector('.chat-toggle-button');
+            const chatContainer = document.querySelector('.chatbot-container');
+            const closeChat = document.querySelector('.close-chat');
+            const chatInput = document.querySelector('.chatbot-input input');
+            const sendButton = document.querySelector('.chatbot-input button');
+            const messagesContainer = document.querySelector('.chatbot-messages');
+            
+            setTimeout(() => {
+                chatContainer.classList.add('active');
+                chatToggle.style.display = 'none';
+                chatInput.focus();
+            }, 1000);
+            
+            chatToggle.addEventListener('click', () => {
+                chatContainer.classList.add('active');
+                chatToggle.style.display = 'none';
+                chatInput.focus();
+            });
+            
+            closeChat.addEventListener('click', () => {
+                chatContainer.classList.remove('active');
+                setTimeout(() => {
+                    chatToggle.style.display = 'flex';
+                }, 300);
+            });
+            
+            function sendMessage() {
+                const question = chatInput.value.trim();
+                if (!question) return;
+                
+                addMessage(question, 'user');
+                chatInput.value = '';
+                
+                if (handleFollowUp(question)) {
+                    return;
+                }
+                
+                conversationState.currentQuery = question;
+                conversationState.mode = 'showing_results';
+                conversationState.currentArticleIndex = 0;
+                processQuery(question);
+            }
+            
+            function addMessage(text, sender) {
+                const message = document.createElement('div');
+                message.classList.add('message');
+                message.classList.add(sender + '-message');
+                message.textContent = text;
+                messagesContainer.appendChild(message);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+            
+            function addMessageWithCitation(text, citation) {
+                const messageContainer = document.createElement('div');
+                
+                const message = document.createElement('div');
+                message.classList.add('message');
+                message.classList.add('bot-message');
+                message.textContent = text;
+                
+                const citationElement = document.createElement('div');
+                citationElement.classList.add('source-citation');
+                citationElement.textContent = 'Source: ' + citation;
+                
+                messageContainer.appendChild(message);
+                messageContainer.appendChild(citationElement);
+                messagesContainer.appendChild(messageContainer);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+            
+            function processQuery(question) {
+                const lowerQuestion = question.toLowerCase();
+                
+                if (DEBUG) {
+                    console.log('Processing query:', question);
+                    console.log('Available articles:', newsData.length);
+                }
+                
+                const isCompanyQuery = lowerQuestion.split(' ').length <= 3;
+                
+                if (isCompanyQuery) {
+                    const allCompanies = [...new Set(newsData.map(article => article.company.toLowerCase()))];
+                    console.log('All companies:', allCompanies);
+                    
+                    const exactCompanyMatch = allCompanies.find(company => 
+                        company.toLowerCase() === lowerQuestion.trim()
+                    );
+                    
+                    const validPartialMatch = allCompanies.some(company => {
+                        const companyWords = company.toLowerCase().split(/\s+/);
+                        const queryWords = lowerQuestion.toLowerCase().trim().split(/\s+/);
+                        
+                        if (company.toLowerCase() === lowerQuestion.toLowerCase().trim()) {
+                            return true;
+                        }
+                        
+                        if (company.toLowerCase().includes(lowerQuestion.toLowerCase().trim())) {
+                            return true;
+                        }
+                        
+                        if (lowerQuestion.toLowerCase().trim().includes(company.toLowerCase())) {
+                            return true;
+                        }
+                        
+                        if (companyWords.length > 1) {
+                            if (queryWords.includes(companyWords[0]) && companyWords[0].length > 3) {
+                                return true;
+                            }
+                            
+                            const companyPhrase = companyWords.join(' ');
+                            const queryPhrase = queryWords.join(' ');
+                            
+                            for (let i = 0; i < companyWords.length - 1; i++) {
+                                const phrase = companyWords[i] + ' ' + companyWords[i+1];
+                                if (queryPhrase.includes(phrase)) {
+                                    return true;
+                                }
+                            }
+                        }
+                        
+                        return false;
+                    });
+                    
+                    const companyExists = exactCompanyMatch !== undefined || validPartialMatch;
+                    
+                    if (!companyExists) {
+                        addMessage(`I'm sorry, I don't have any news articles about "${lowerQuestion}". Would you like information about another company?`, 'bot');
+                        conversationState.mode = 'initial';
+                        return;
+                    }
+                }
+                
+                let keywords = [];
+                
+                const quoteRegex = /"([^"]+)"/g;
+                let quoteMatch;
+                while ((quoteMatch = quoteRegex.exec(question)) !== null) {
+                    keywords.push(quoteMatch[1].toLowerCase());
+                }
+                
+                const stopWords = new Set([
+                    'a', 'an', 'the', 'and', 'or', 'but', 'is', 'are', 'was', 'were', 
+                    'to', 'of', 'in', 'on', 'at', 'by', 'for', 'with', 'about', 'from',
+                    'these', 'those', 'this', 'that', 'have', 'has', 'had', 'do', 'does',
+                    'did', 'can', 'could', 'will', 'would', 'should', 'may', 'might'
+                ]);
+                
+                const wordKeywords = lowerQuestion
+                    .replace(/[^a-zA-Z0-9 ]/g, ' ')
+                    .split(' ')
+                    .filter(word => word.length > 2 && !stopWords.has(word.toLowerCase()));
+                    
+                keywords = [...keywords, ...wordKeywords];
+                
+                if (DEBUG) {
+                    console.log('Extracted keywords:', keywords);
+                }
+                
+                let relevantArticles = [];
+                newsData.forEach(article => {
+                    let score = 0;
+                    const title = article.title.toLowerCase();
+                    const body = article.body.toLowerCase();
+                    const fullContent = article.full_content ? article.full_content.toLowerCase() : '';
+                    const company = article.company.toLowerCase();
+                    
+                    if (company && lowerQuestion.includes(company)) {
+                        score += 15;
+                    }
+                    
+                    if (company && lowerQuestion.trim() === company) {
+                        score += 30;
+                    }
+                    
+                    if (company && lowerQuestion.trim().startsWith(company)) {
+                        score += 25;
+                    }
+                    if (company && company.startsWith(lowerQuestion.trim())) {
+                        score += 20;
+                    }
+                    
+                    if (isCompanyQuery && company && !company.includes(lowerQuestion) && !lowerQuestion.includes(company)) {
+                        const companyFirstWord = company.split(' ')[0].toLowerCase();
+                        const queryFirstWord = lowerQuestion.trim().split(' ')[0].toLowerCase();
+                        
+                        if (companyFirstWord !== queryFirstWord) {
+                            score -= 50;
+                        }
+                    }
+                    
+                    if (fullContent && fullContent.includes(lowerQuestion)) {
+                        score += 10;
+                    }
+                    
+                    keywords.forEach(keyword => {
+                        if (company && keyword.length > 2 && company === keyword) {
+                            score += 18;
+                        }
+                        else if (company && keyword.length > 2 && company.includes(keyword)) {
+                            score += 5;
+                        }
+                        if (company && keyword.length > 2 && keyword.includes(company)) {
+                            score += 10;
+                        }
+                        
+                        if (title.includes(keyword)) score += 5;
+                        if (body.includes(keyword)) score += 3;
+                        
+                        if (fullContent) {
+                            if (keyword.length > 10 && fullContent.includes(keyword)) {
+                                score += 8;
+                            } else if (fullContent.includes(keyword)) {
+                                score += 2;
+                            }
+                            
+                            const keywordRegex = new RegExp(keyword, 'gi');
+                            const occurrences = (fullContent.match(keywordRegex) || []).length;
+                            score += Math.min(occurrences, 5) * 0.5;
+                        }
+                    });
+                    
+                    if (lowerQuestion.includes('who') || lowerQuestion.includes('person')) {
+                        const nameRegex = /([A-Z][a-z]+ [A-Z][a-z]+)/g;
+                        const names = fullContent ? (fullContent.match(nameRegex) || []) : [];
+                        if (names.length > 0) score += 2;
+                    }
+                    
+                    if (score > 0) {
+                        if (DEBUG) {
+                            console.log(`Article: ${article.title}, Score: ${score}`);
+                        }
+                        relevantArticles.push({...article, score});
+                    }
+                });
+                
+                relevantArticles.sort((a, b) => b.score - a.score);
+                
+                conversationState.relevantArticles = relevantArticles;
+                conversationState.currentArticleIndex = 0;
+                
+                if (DEBUG) {
+                    console.log('Relevant articles found:', relevantArticles.length);
+                    if (relevantArticles.length > 0) {
+                        console.log('Top article:', relevantArticles[0].title);
+                        console.log('Top score:', relevantArticles[0].score);
+                    }
+                }
+                
+                if (relevantArticles.length > 0) {
+                    const mostRelevant = relevantArticles[0];
+                    let response = "";
+                    
+                    let informativeSnippet = '';
+                    if (mostRelevant.full_content) {
+                        const fullContent = mostRelevant.full_content;
+                        
+                        const paragraphs = fullContent.split(/\n+/)
+                            .filter(p => p.trim().length > 50);
+                        
+                        let foundRelevantSnippet = false;
+                        for (const paragraph of paragraphs) {
+                            const lowerPara = paragraph.toLowerCase();
+                            const matchedKeywords = keywords.filter(kw => lowerPara.includes(kw));
+                            
+                            if (matchedKeywords.length >= 2) {
+                                informativeSnippet = paragraph.trim().substring(0, 300) + '...';
+                                foundRelevantSnippet = true;
+                                break;
+                            }
+                        }
+                        
+                        if (!foundRelevantSnippet) {
+                            for (const paragraph of paragraphs) {
+                                if (keywords.some(keyword => paragraph.toLowerCase().includes(keyword))) {
+                                    informativeSnippet = paragraph.trim().substring(0, 300) + '...';
+                                    foundRelevantSnippet = true;
+                                    break;
+                                }
+                            }
+                        }
+                        
+                        if (!foundRelevantSnippet && fullContent.length > 0) {
+                            if (fullContent.length > 500) {
+                                const middleStart = Math.floor(fullContent.length / 3);
+                                const middleContent = fullContent.substring(middleStart, middleStart + 500);
+                                const sentences = middleContent.split(/[.!?] /).filter(s => s.length > 30);
+                                
+                                if (sentences.length > 0) {
+                                    informativeSnippet = sentences[0].trim() + '...';
+                                } else {
+                                    informativeSnippet = fullContent.substring(0, 300) + '...';
+                                }
+                            } else {
+                                informativeSnippet = fullContent.substring(0, 300) + '...';
+                            }
+                        }
+                    }
+                    
+                    if (lowerQuestion.includes('what') && lowerQuestion.includes('company')) {
+                        response = `Based on the news, ${mostRelevant.company} has been mentioned in relation to: "${mostRelevant.title}"`;
+                    } else if (lowerQuestion.includes('latest') || lowerQuestion.includes('recent')) {
+                        response = `The latest news I found is: "${mostRelevant.title}". ${mostRelevant.body.substring(0, 150)}...`;
+                    } else if (informativeSnippet) {
+                        response = `According to ${mostRelevant.source}: "${informativeSnippet}"`;
+                    } else {
+                        response = `I found this relevant information: "${mostRelevant.title}". ${mostRelevant.body.substring(0, 150)}...`;
+                    }
+                    
+                    addMessageWithCitation(response, `${mostRelevant.source}, ${mostRelevant.date} - ${mostRelevant.url}`);
+                    
+                    if (relevantArticles.length > 1) {
+                        setTimeout(() => {
+                            addMessage(`I also found ${relevantArticles.length - 1} more articles that might be relevant. Would you like to know more about any specific topic?`, 'bot');
+                            conversationState.mode = 'offering_more';
+                        }, 1000);
+                    }
+                } else {
+                    addMessage(`I couldn't find any information about that in the current news articles. Could you try asking something else?`, 'bot');
+                    conversationState.mode = 'initial';
+                }
+            }
+            
+            const conversationState = {
+                mode: 'initial',
+                currentQuery: '',
+                relevantArticles: [],
+                currentArticleIndex: 0
+            };
+            
+            function handleFollowUp(response) {
+                const lowerResponse = response.toLowerCase().trim();
+                
+                if (conversationState.mode === 'offering_more' && 
+                    (lowerResponse === 'yes' || lowerResponse === 'sure' || 
+                     lowerResponse === 'ok' || lowerResponse.includes('yes'))) {
+                    
+                    if (conversationState.relevantArticles.length > conversationState.currentArticleIndex + 1) {
+                        conversationState.currentArticleIndex++;
+                        const nextArticle = conversationState.relevantArticles[conversationState.currentArticleIndex];
+                        
+                        let response = '';
+                        if (nextArticle.full_content) {
+                            const snippet = nextArticle.full_content.substring(0, 300) + '...';
+                            response = `Here's another relevant article from ${nextArticle.source}: "${snippet}"`;
+                        } else {
+                            response = `Here's another relevant article: "${nextArticle.title}". ${nextArticle.body.substring(0, 150)}...`;
+                        }
+                        
+                        addMessageWithCitation(response, `${nextArticle.source}, ${nextArticle.date} - ${nextArticle.url}`);
+                        
+                        const remaining = conversationState.relevantArticles.length - conversationState.currentArticleIndex - 1;
+                        if (remaining > 0) {
+                            setTimeout(() => {
+                                addMessage(`I have ${remaining} more articles that might interest you. Would you like to see another one?`, 'bot');
+                            }, 1000);
+                        } else {
+                            setTimeout(() => {
+                                addMessage(`That's all the relevant articles I found. Is there something else you'd like to know about?`, 'bot');
+                                conversationState.mode = 'initial';
+                            }, 1000);
+                        }
+                        return true;
+                    }
+                }
+                
+                return false;
+            }
+            
+            sendButton.addEventListener('click', sendMessage);
+            chatInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') sendMessage();
+            });
+            
+            chatToggle.style.display = 'none';
+            chatToggle.style.opacity = '1';
+            
+            setTimeout(() => {
+                chatToggle.classList.add('attention');
+            }, 2000);
+        });
+    </script>
 </body>
 </html>
