@@ -687,21 +687,17 @@ html_content += f"""
                     console.log('Available articles:', newsData.length);
                 }}
                 
-                // Check if it's a direct company name query
                 const isCompanyQuery = lowerQuestion.split(' ').length <= 3;
                 
-                // First check if the query is just a company name, and if that company exists in our data
                 if (isCompanyQuery) {{
-                    // Get a list of all unique company names in our data
                     const allCompanies = [...new Set(newsData.map(article => article.company.toLowerCase()))];
                     console.log('All companies:', allCompanies);
                     
-                    // Check if any company exactly matches the query
                     const exactCompanyMatch = allCompanies.find(company => 
                         company.toLowerCase() === lowerQuestion.trim()
                     );
                     
-                    const validPartialMatch = allCompanies.some(company => {
+                    const validPartialMatch = allCompanies.some(company => {{
                         const companyWords = company.toLowerCase().split(/\\s+/);
                         const queryWords = lowerQuestion.toLowerCase().trim().split(/\\s+/);
                         
@@ -920,11 +916,8 @@ html_content += f"""
                             }}
                         }}
                         
-                        // If still no good paragraph found, just take an interesting part of the content
                         if (!foundRelevantSnippet && fullContent.length > 0) {{
-                            // If we have substantial content, try to find the most interesting part
                             if (fullContent.length > 500) {{
-                                // Look for a part that might be from the middle of the article
                                 const middleStart = Math.floor(fullContent.length / 3);
                                 const middleContent = fullContent.substring(middleStart, middleStart + 500);
                                 const sentences = middleContent.split(/[.!?] /).filter(s => s.length > 30);
@@ -940,13 +933,11 @@ html_content += f"""
                         }}
                     }}
                     
-                    // Generate different responses based on question type
                     if (lowerQuestion.includes('what') && lowerQuestion.includes('company')) {{
                         response = `Based on the news, ${{mostRelevant.company}} has been mentioned in relation to: "${{mostRelevant.title}}"`;
                     }} else if (lowerQuestion.includes('latest') || lowerQuestion.includes('recent')) {{
                         response = `The latest news I found is: "${{mostRelevant.title}}". ${{mostRelevant.body.substring(0, 150)}}...`;
                     }} else if (informativeSnippet) {{
-                        // Use the full content snippet for detailed answers
                         response = `According to ${{mostRelevant.source}}: "${{informativeSnippet}}"`;
                     }} else {{
                         response = `I found this relevant information: "${{mostRelevant.title}}". ${{mostRelevant.body.substring(0, 150)}}...`;
@@ -954,11 +945,10 @@ html_content += f"""
                     
                     addMessageWithCitation(response, `${{mostRelevant.source}}, ${{mostRelevant.date}} - ${{mostRelevant.url}}`);
                     
-                    // If there are more relevant articles, mention them
                     if (relevantArticles.length > 1) {{
                         setTimeout(() => {{
                             addMessage(`I also found ${{relevantArticles.length - 1}} more articles that might be relevant. Would you like to know more about any specific topic?`, 'bot');
-                            conversationState.mode = 'offering_more'; // Set mode to offering more articles
+                            conversationState.mode = 'offering_more';
                         }}, 1000);
                     }}
                 }} else {{
