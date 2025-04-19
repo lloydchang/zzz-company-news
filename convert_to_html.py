@@ -286,8 +286,10 @@ for item in news_items:
     # Check if the title contains "No news" and adjust the title rendering accordingly
     if "No news" in title:
         title_html = f'<h3 class="news-title">No news</h3>'
+        date_html = "" # Don't show date for "No news" entries
     else:
         title_html = f'<h3 class="news-title"><a href="{url}" target="_blank">{title}</a></h3>'
+        date_html = f'<div class="news-date">{date}</div>'
     
     html_content += f"""
     <div class="news-card">
@@ -296,7 +298,7 @@ for item in news_items:
         {title_html}
         <div class="news-source">{source}</div>
         <p>{body}</p>
-        <div class="news-date">{date}</div>
+        {date_html}
     </div>
     """
 
