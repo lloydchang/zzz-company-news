@@ -653,6 +653,12 @@ html_content += f"""
                     const title = article.title.toLowerCase();
                     const body = article.body.toLowerCase();
                     const fullContent = article.full_content ? article.full_content.toLowerCase() : '';
+                    const company = article.company.toLowerCase();
+                    
+                    // Direct company name match in query - highest priority
+                    if (company && lowerQuestion.includes(company)) {{
+                        score += 15; // Highest boost for company name match in question
+                    }}
                     
                     // Check for direct question matches in content
                     if (fullContent && fullContent.includes(lowerQuestion)) {{
@@ -661,8 +667,16 @@ html_content += f"""
                     
                     // Check if keywords are in title, body or full content
                     keywords.forEach(keyword => {{
-                        // Check for exact matches first
-                        if (title.includes(keyword)) score += 5;  // Title matches are weighted highest
+                        // Check for company name match with keywords
+                        if (company && keyword.length > 2 && company.includes(keyword)) {{
+                            score += 12; // Very high boost for company match
+                        }}
+                        if (company && keyword.length > 2 && keyword.includes(company)) {{
+                            score += 12; // Also boost if keyword contains company name
+                        }}
+                        
+                        // Check for exact matches in content
+                        if (title.includes(keyword)) score += 5;  // Title matches are weighted highly
                         if (body.includes(keyword)) score += 3;   // Summary matches are important
                         
                         if (fullContent) {{
