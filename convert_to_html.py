@@ -283,11 +283,17 @@ for item in news_items:
     # Add image HTML if an image URL exists
     image_html = f'<div class="news-image"><img src="{image}" alt="{title}"></div>' if image and image != "None" else ''
     
+    # Check if the title contains "No recent news found for" and adjust the title rendering accordingly
+    if "No recent news found for" in title:
+        title_html = f'<h3 class="news-title">{title}</h3>'
+    else:
+        title_html = f'<h3 class="news-title"><a href="{url}" target="_blank">{title}</a></h3>'
+    
     html_content += f"""
     <div class="news-card">
         {company_tag}
         {image_html}
-        <h3 class="news-title"><a href="{url}" target="_blank">{title}</a></h3>
+        {title_html}
         <div class="news-source">{source}</div>
         <p>{body}</p>
         <div class="news-date">{date}</div>
