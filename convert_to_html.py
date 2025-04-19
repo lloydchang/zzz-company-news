@@ -8,6 +8,59 @@ from bs4 import BeautifulSoup
 import time
 import random
 
+# Define a function to handle rate limiting with exponential backoff
+def request_with_retry(url, headers=None, max_retries=3, base_delay=2):
+    """
+    Make HTTP requests with exponential backoff for rate limiting
+    
+    Args:
+        url: URL to request
+        headers: Request headers
+        max_retries: Maximum number of retry attempts
+        base_delay: Base delay between retries in seconds
+        
+    Returns:
+        Response object or raises exception after max retries
+    """
+    if headers is None:
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+            'Accept-Language': 'en-US,en;q=0.5',
+            'Referer': 'https://www.google.com/',
+            'DNT': '1',
+            'Connection': 'keep-alive',
+            'Upgrade-Insecure-Requests': '1',
+            'Cache-Control': 'max-age=0',
+        }
+    
+    for attempt in range(max_retries):
+        try:
+            response = requests.get(url, headers=headers, timeout=15)
+            
+            # Check if we hit rate limiting (status codes 429, 403, or 503 often indicate rate limiting)
+            if response.status_code in (429, 403, 503):
+                print(f"Rate limit hit (status code: {response.status_code}), retrying in {base_delay * (2**attempt)} seconds...")
+                time.sleep(base_delay * (2**attempt) + random.uniform(0, 1))  # Exponential backoff with jitter
+                continue
+                
+            # Raise exception for other error codes
+            response.raise_for_status()
+            return response
+            
+        except requests.exceptions.RequestException as e:
+            # Check if we've used all retries
+            if attempt < max_retries - 1:
+                wait_time = base_delay * (2**attempt) + random.uniform(0, 1)
+                print(f"Request error: {e}. Retrying in {wait_time:.2f} seconds...")
+                time.sleep(wait_time)  # Exponential backoff with jitter
+            else:
+                # Final attempt failed, re-raise the exception
+                raise
+    
+    # This should not be reached due to the raise in the loop, but just in case
+    raise requests.exceptions.RequestException("Max retries exceeded")
+
 # Read the CSV file
 news_items = []
 with open("aggregated-news.csv", "r", encoding="utf-8") as file:
@@ -318,8 +371,17 @@ def fetch_url_content(url):
         if "microsoft.com/en-us/investor/" in url:
             return "Microsoft investor relations content is not available for extraction."
         
+        # Rotate between different user agents to reduce chance of being rate-limited
+        user_agents = [
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36',
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Safari/605.1.15',
+            'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:94.0) Gecko/20100101 Firefox/94.0',
+            'Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Mobile/15E148 Safari/604.1'
+        ]
+        
         headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36',
+            'User-Agent': random.choice(user_agents),
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
             'Accept-Language': 'en-US,en;q=0.5',
             'Referer': 'https://www.google.com/',
@@ -329,9 +391,8 @@ def fetch_url_content(url):
             'Cache-Control': 'max-age=0',
         }
         
-        # Add timeout to prevent hanging on problematic sites
-        response = requests.get(url, headers=headers, timeout=15)
-        response.raise_for_status()
+        # Use the retry function for requests with increased max_retries and longer base delay
+        response = request_with_retry(url, headers=headers, max_retries=5, base_delay=3)
         
         # Parse the HTML content
         soup = BeautifulSoup(response.text, 'html.parser')
