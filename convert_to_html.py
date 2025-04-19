@@ -29,7 +29,16 @@ for csv_file in os.listdir():
                     if "title" in row:
                         company_mapping[row["title"]] = company_name
         except Exception as e:
-            print(f"Error reading {csv_file}: {e}")
+                              let response = '';
+                        if (nextArticle.full_content) {
+                            const snippet = nextArticle.full_content.substring(0, 300) + '...';
+                            response = `Here's another relevant article from ${nextArticle.source}: "${snippet}"`;
+                        } else if (nextArticle.title.includes("No news")) {
+                            // Special handling for "No news" items to show which company they belong to
+                            response = `For ${nextArticle.company}, there's ${nextArticle.title.toLowerCase()}.`;
+                        } else {
+                            response = `Here's another relevant article: "${nextArticle.title}". ${nextArticle.body.substring(0, 150)}...`;
+                        }rint(f"Error reading {csv_file}: {e}")
 
 # Generate HTML content
 html_content = """<!DOCTYPE html>
