@@ -660,6 +660,19 @@ html_content += f"""
                         score += 15; // Highest boost for company name match in question
                     }}
                     
+                    // Exact match for company name - highest priority (added fix)
+                    if (company && lowerQuestion.trim() === company) {{
+                        score += 30; // Super high boost for exact company name match
+                    }}
+                    
+                    // Prioritize company names that start with the same phrase (added fix)
+                    if (company && lowerQuestion.trim().startsWith(company)) {{
+                        score += 25; // Very high priority for company name at start
+                    }}
+                    if (company && company.startsWith(lowerQuestion.trim())) {{
+                        score += 20; // High priority if company starts with query
+                    }}
+                    
                     // Check for direct question matches in content
                     if (fullContent && fullContent.includes(lowerQuestion)) {{
                         score += 10; // Large boost for exact question match
@@ -668,11 +681,14 @@ html_content += f"""
                     // Check if keywords are in title, body or full content
                     keywords.forEach(keyword => {{
                         // Check for company name match with keywords
-                        if (company && keyword.length > 2 && company.includes(keyword)) {{
-                            score += 12; // Very high boost for company match
+                        if (company && keyword.length > 2 && company === keyword) {{
+                            score += 18; // Extremely high boost for exact keyword match
+                        }}
+                        else if (company && keyword.length > 2 && company.includes(keyword)) {{
+                            score += 5; // Reduced from 12 to 5 - partial matches shouldn't be weighted too heavily
                         }}
                         if (company && keyword.length > 2 && keyword.includes(company)) {{
-                            score += 12; // Also boost if keyword contains company name
+                            score += 10; // Boost if keyword contains company name
                         }}
                         
                         // Check for exact matches in content
