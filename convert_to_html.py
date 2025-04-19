@@ -701,10 +701,7 @@ html_content += f"""
                         company.toLowerCase() === lowerQuestion.trim()
                     );
                     
-                    // Check for partial but valid company name matches (exact word boundaries)
-                    // This prevents "Partum Health" from matching with "Fort Health" just because both have "Health"
                     const validPartialMatch = allCompanies.some(company => {
-                        // Split both into words and check for substantial overlap
                         const companyWords = company.toLowerCase().split(/\\s+/);
                         const queryWords = lowerQuestion.toLowerCase().trim().split(/\\s+/);
                         
@@ -815,10 +812,7 @@ html_content += f"""
                         score += 20; // High priority if company starts with query
                     }}
                     
-                    // IMPORTANT FIX: Penalize different company matches when searching for a specific company
-                    // This prevents "Fort Health" from matching when searching for "Partum Health"
                     if (isCompanyQuery && company && !company.includes(lowerQuestion) && !lowerQuestion.includes(company)) {{
-                        // Check if first words match - if they don't, heavily penalize
                         const companyFirstWord = company.split(' ')[0].toLowerCase();
                         const queryFirstWord = lowerQuestion.trim().split(' ')[0].toLowerCase();
                         
@@ -845,28 +839,23 @@ html_content += f"""
                             score += 10; // Boost if keyword contains company name
                         }}
                         
-                        // Check for exact matches in content
-                        if (title.includes(keyword)) score += 5;  // Title matches are weighted highly
-                        if (body.includes(keyword)) score += 3;   // Summary matches are important
+                        if (title.includes(keyword)) score += 5;
+                        if (body.includes(keyword)) score += 3;
                         
                         if (fullContent) {{
-                            // For longer keywords (phrases), boost the score even more
                             if (keyword.length > 10 && fullContent.includes(keyword)) {{
                                 score += 8;
                             }} else if (fullContent.includes(keyword)) {{
-                                score += 2;  // Full content matches
+                                score += 2;
                             }}
                             
-                            // Count occurrences for additional scoring
                             const keywordRegex = new RegExp(keyword, 'gi');
                             const occurrences = (fullContent.match(keywordRegex) || []).length;
-                            score += Math.min(occurrences, 5) * 0.5; // Cap at 2.5 points from occurrences
+                            score += Math.min(occurrences, 5) * 0.5;
                         }}
                     }});
                     
-                    // Special handling for specific question types
                     if (lowerQuestion.includes('who') || lowerQuestion.includes('person')) {{
-                        // Person entity detection
                         const nameRegex = /([A-Z][a-z]+ [A-Z][a-z]+)/g;
                         const names = fullContent ? (fullContent.match(nameRegex) || []) : [];
                         if (names.length > 0) score += 2;
@@ -905,15 +894,10 @@ html_content += f"""
                     if (mostRelevant.full_content) {{
                         const fullContent = mostRelevant.full_content;
                         
-                        // Improved paragraph extraction
-                        // First split by clear paragraph breaks
                         const paragraphs = fullContent.split(/\\n+/)
                             .filter(p => p.trim().length > 50);
                         
-                        // If no paragraphs found, create them from sentences
                         let foundRelevantSnippet = false;
-                        
-                        // First look for paragraphs containing multiple keywords
                         for (const paragraph of paragraphs) {{
                             const lowerPara = paragraph.toLowerCase();
                             const matchedKeywords = keywords.filter(kw => lowerPara.includes(kw));
