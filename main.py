@@ -12,6 +12,20 @@ from cache_manager import load_cache, save_cache, prepare_news_data
 from html_generator import generate_html_head_and_styles, generate_news_items_html, generate_chatbot_html
 from js_generator import generate_chatbot_js
 
+def format_date_only(date_str):
+    """Format a date string to YYYY-MM-DD format"""
+    if not date_str:
+        return ""
+    try:
+        if isinstance(date_str, str) and 'T' in date_str:
+            # Handle ISO format
+            date_str = date_str.split('T')[0]
+        elif isinstance(date_str, datetime.datetime):
+            date_str = date_str.strftime("%Y-%m-%d")
+        return date_str
+    except:
+        return date_str
+
 def main():
     """
     Main function that coordinates the process of generating the HTML dashboard
@@ -21,6 +35,11 @@ def main():
     # Step 1: Load news items from CSV
     news_items = load_news_items()
     print(f"Loaded {len(news_items)} news items")
+    
+    # Format dates to YYYY-MM-DD
+    for item in news_items:
+        if 'date' in item:
+            item['date'] = format_date_only(item['date'])
     
     # Step 2: Create company mapping
     company_mapping = create_company_mapping()
