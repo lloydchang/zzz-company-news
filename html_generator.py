@@ -306,7 +306,6 @@ def generate_chatbot_html(news_data_for_js):
     
     return f"""
     </div>
-    <p class="timestamp">{current_date}</p>
     
     <!-- Chatbot UI - Added title attribute and more visible text -->
     <button class="chat-toggle-button" title="Open Chat Assistant">💬</button>
