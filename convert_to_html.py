@@ -947,9 +947,9 @@ html_content += f"""
                         let response = '';
                         if (nextArticle.full_content) {{
                             const snippet = nextArticle.full_content.substring(0, 300) + '...';
-                            response = `Here's another relevant article from ${{nextArticle.source}}: "${{snippet}}"`;
+                            response = `${{nextArticle.source}}: "${{snippet}}"`;
                         }} else {{
-                            response = `Here's another relevant article: "${{nextArticle.title}}". ${{nextArticle.body.substring(0, 150)}}...`;
+                            response = `${{nextArticle.title}}". ${{nextArticle.body.substring(0, 150)}}...`;
                         }}
                         
                         addMessageWithCitation(response, `${{nextArticle.source}}, ${{nextArticle.date}} - ${{nextArticle.url}}`);
