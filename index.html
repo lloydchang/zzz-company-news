@@ -340,7 +340,7 @@
     </div>
     
     </div>
-    <p class="timestamp">Last updated: 2025-04-20T03:22:33.849466+00:00</p>
+    <p class="timestamp">Last updated: 2025-04-20T03:32:54.045351+00:00</p>
     
     <!-- Chatbot UI - Added title attribute and more visible text -->
     <button class="chat-toggle-button" title="Open Chat Assistant">💬</button>
@@ -718,9 +718,9 @@
                         let response = '';
                         if (nextArticle.full_content) {
                             const snippet = nextArticle.full_content.substring(0, 300) + '...';
-                            response = `Here's another relevant article from ${nextArticle.source}: "${snippet}"`;
+                            response = `${nextArticle.source}: "${snippet}"`;
                         } else {
-                            response = `Here's another relevant article: "${nextArticle.title}". ${nextArticle.body.substring(0, 150)}...`;
+                            response = `${nextArticle.title}". ${nextArticle.body.substring(0, 150)}...`;
                         }
                         
                         addMessageWithCitation(response, `${nextArticle.source}, ${nextArticle.date} - ${nextArticle.url}`);
