@@ -26,7 +26,15 @@ def request_with_retry(url, headers=None, max_retries=3, base_delay=2):
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36',
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-            'Accept-Language': 'en-US,en;q=0.5',
+            'Accept-Language                        let response = '';
+                        if (nextArticle.full_content) {
+                            const snippet = nextArticle.full_content.substring(0, 300) + '...';
+                            response = `${snippet}`;
+                        } else {
+                            response = `${nextArticle.title}. ${nextArticle.body.substring(0, 150)}...`;
+                        }
+                        
+                        addMessageWithCitation(response, `${nextArticle.source}`, nextArticle.url);,en;q=0.5',
             'Referer': 'https://www.google.com/',
             'DNT': '1',
             'Connection': 'keep-alive',
