@@ -907,9 +907,9 @@ html_content += f"""
                     }} else if (lowerQuestion.includes('latest') || lowerQuestion.includes('recent')) {{
                         response = `The latest news I found is: "${{mostRelevant.title}}". ${{mostRelevant.body.substring(0, 150)}}...`;
                     }} else if (informativeSnippet) {{
-                        response = `According to ${{mostRelevant.source}}: "${{informativeSnippet}}"`;
+                        response = `${{informativeSnippet}}`;
                     }} else {{
-                        response = `I found this relevant information: "${{mostRelevant.title}}". ${{mostRelevant.body.substring(0, 150)}}...`;
+                        response = `${{mostRelevant.title}} ${{mostRelevant.body.substring(0, 150)}}`;
                     }}
                     
                     addMessageWithCitation(response, `${{mostRelevant.source}}`, mostRelevant.url);
