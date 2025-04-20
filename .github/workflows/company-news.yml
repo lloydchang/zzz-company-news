@@ -34,7 +34,7 @@ jobs:
       - name: Convert CSV to HTML
         run: |
           source ./venv/bin/activate
-          python convert_to_html.py
+          python main.py
       
       - name: Add files to Git
         run: |
