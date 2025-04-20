@@ -85,12 +85,12 @@ for csv_file in os.listdir():
             response = ''
             if next_article.get('full_content'):
                 snippet = next_article['full_content'][:300] + '...'
-                response = f"Here's another relevant article from {next_article['source']}: \"{snippet}\""
+                response = f"{snippet}"
             elif "No news" in next_article.get('title', ''):
                 # Special handling for "No news" items to show which company they belong to
                 response = f"For {next_article['company']}, there's {next_article['title'].lower()}."
             else:
-                response = f"Here's another relevant article: \"{next_article['title']}\". {next_article['body'][:150]}..."
+                response = f"{next_article['title']}. {next_article['body'][:150]}..."
             print(f"Error reading {csv_file}: {e}")
 
 # Generate HTML content
