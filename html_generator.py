@@ -300,11 +300,12 @@ def generate_chatbot_html(news_data_for_js):
     Returns:
         HTML string containing the chatbot section and closing tags
     """
-    current_time = datetime.datetime.now(datetime.timezone.utc).isoformat()
+    # Use date-only format without time components
+    current_date = datetime.datetime.now().strftime('%Y-%m-%d')
     
     return f"""
     </div>
-    <p class="timestamp">Last updated: {current_time}</p>
+    <p class="timestamp">Last updated: {current_date}</p>
     
     <!-- Chatbot UI - Added title attribute and more visible text -->
     <button class="chat-toggle-button" title="Open Chat Assistant">💬</button>

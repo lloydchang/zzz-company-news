@@ -27,7 +27,7 @@ for company in 'Unaliwear' 'BrainCheck' 'Dermala' 'Oralucent' 'Flowly' 'Rosy Wel
     echo "Warning: No results for $company or CSV creation failed"
     # Create an empty CSV with just the header to prevent errors
     echo "date,title,body,url,image,source" > "news-$company.csv"
-    # Add a placeholder entry in aggregated CSV
+    # Add a placeholder entry in aggregated CSV with date only (no time components)
     echo "\"$company\",\"$(date +%Y-%m-%d)\",\"No news\",,,," >> aggregated-news.csv
   fi
 done
