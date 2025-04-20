@@ -25,14 +25,8 @@ def request_with_retry(url, headers=None, max_retries=3, base_delay=2):
     if headers is None:
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36',
-            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.                    addMessageWithCitation(response, `${mostRelevant.source}`, mostRelevant.url);
-                    
-                    if (relevantArticles.length > 1) {
-                        setTimeout(() => {
-                            addMessage(`I also found ${relevantArticles.length - 1} more articles that might be relevant. Would you like to know more about any specific topic?`, 'bot');
-                            conversationState.mode = 'offering_more';
-                        }, 1000);
-                    }        'Accept-Language': 'en-US,en;q=0.5',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+            'Accept-Language': 'en-US,en;q=0.5',
             'Referer': 'https://www.google.com/',
             'DNT': '1',
             'Connection': 'keep-alive',
