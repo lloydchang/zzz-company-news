@@ -340,7 +340,7 @@
     </div>
     
     </div>
-    <p class="timestamp">Last updated: 2025-04-20T02:52:05.392943+00:00</p>
+    <p class="timestamp">Last updated: 2025-04-20T03:00:28.265581+00:00</p>
     
     <!-- Chatbot UI - Added title attribute and more visible text -->
     <button class="chat-toggle-button" title="Open Chat Assistant">💬</button>
@@ -678,9 +678,9 @@
                     } else if (lowerQuestion.includes('latest') || lowerQuestion.includes('recent')) {
                         response = `The latest news I found is: "${mostRelevant.title}". ${mostRelevant.body.substring(0, 150)}...`;
                     } else if (informativeSnippet) {
-                        response = `According to ${mostRelevant.source}: "${informativeSnippet}"`;
+                        response = `${informativeSnippet}`;
                     } else {
-                        response = `I found this relevant information: "${mostRelevant.title}". ${mostRelevant.body.substring(0, 150)}...`;
+                        response = `${mostRelevant.title} ${mostRelevant.body.substring(0, 150)}`;
                     }
                     
                     addMessageWithCitation(response, `${mostRelevant.source}`, mostRelevant.url);
