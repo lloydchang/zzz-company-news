@@ -25,8 +25,14 @@ def request_with_retry(url, headers=None, max_retries=3, base_delay=2):
     if headers is None:
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36',
-            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-            'Accept-Language': 'en-US,en;q=0.5',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.                    addMessageWithCitation(response, `${mostRelevant.source}`, mostRelevant.url);
+                    
+                    if (relevantArticles.length > 1) {
+                        setTimeout(() => {
+                            addMessage(`I also found ${relevantArticles.length - 1} more articles that might be relevant. Would you like to know more about any specific topic?`, 'bot');
+                            conversationState.mode = 'offering_more';
+                        }, 1000);
+                    }        'Accept-Language': 'en-US,en;q=0.5',
             'Referer': 'https://www.google.com/',
             'DNT': '1',
             'Connection': 'keep-alive',
@@ -646,7 +652,7 @@ html_content += f"""
                 messagesContainer.scrollTop = messagesContainer.scrollHeight;
             }}
             
-            function addMessageWithCitation(text, citation) {{
+            function addMessageWithCitation(text, citation, url) {{
                 const messageContainer = document.createElement('div');
                 
                 const message = document.createElement('div');
@@ -654,12 +660,22 @@ html_content += f"""
                 message.classList.add('bot-message');
                 message.textContent = text;
                 
-                const citationElement = document.createElement('div');
-                citationElement.classList.add('source-citation');
-                citationElement.textContent = 'Source: ' + citation;
+                // Create URL link element if URL is provided
+                if (url && url !== "#") {{
+                    const linkElement = document.createElement('div');
+                    linkElement.classList.add('source-link');
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.target = "_blank"; // Open in new tab
+                    link.textContent = url;
+                    linkElement.appendChild(link);
+                    messageContainer.appendChild(message);
+                    messageContainer.appendChild(linkElement);
+                }} else {{
+                    // No URL, just add the message
+                    messageContainer.appendChild(message);
+                }}
                 
-                messageContainer.appendChild(message);
-                messageContainer.appendChild(citationElement);
                 messagesContainer.appendChild(messageContainer);
                 messagesContainer.scrollTop = messagesContainer.scrollHeight;
             }}
@@ -902,7 +918,7 @@ html_content += f"""
                         response = `I found this relevant information: "${{mostRelevant.title}}". ${{mostRelevant.body.substring(0, 150)}}...`;
                     }}
                     
-                    addMessageWithCitation(response, `${{mostRelevant.source}}, ${{mostRelevant.date}} - ${{mostRelevant.url}}`);
+                    addMessageWithCitation(response, `${{mostRelevant.source}}`, mostRelevant.url);
                     
                     if (relevantArticles.length > 1) {{
                         setTimeout(() => {{
