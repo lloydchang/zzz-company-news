@@ -947,12 +947,12 @@ html_content += f"""
                         let response = '';
                         if (nextArticle.full_content) {{
                             const snippet = nextArticle.full_content.substring(0, 300) + '...';
-                            response = `${{nextArticle.source}}: "${{snippet}}"`;
+                            response = `${{snippet}}`;
                         }} else {{
                             response = `${{nextArticle.title}}". ${{nextArticle.body.substring(0, 150)}}...`;
                         }}
                         
-                        addMessageWithCitation(response, `${{nextArticle.source}}, ${{nextArticle.date}} - ${{nextArticle.url}}`);
+                        addMessageWithCitation(response, `${nextArticle.source}`, nextArticle.url);
                         
                         const remaining = conversationState.relevantArticles.length - conversationState.currentArticleIndex - 1;
                         if (remaining > 0) {{
