@@ -13,10 +13,25 @@ for company in 'Unaliwear' 'BrainCheck' 'Dermala' 'Oralucent' 'Flowly' 'Rosy Wel
     search_term="$company company"
   fi
   
-  # Normal processing with retry
-  ddgs news -k "$search_term" -m 2 -o "news-$company.csv" || 
-  # Retry once if it fails
-  (echo "Retrying $company..." && sleep 5 && ddgs news -k "$search_term" -m 2 -o "news-$company.csv")
+  # Normal processing with multiple retries and exponential backoff with jitter
+  success=false
+  max_retries=5
+  for attempt in $(seq 1 $max_retries); do
+    if ddgs news -k "$search_term" -m 2 -o "news-$company.csv"; then
+      success=true
+      break
+    fi
+    
+    # If we failed but have more retries left
+    if [ $attempt -lt $max_retries ]; then
+      # Exponential backoff with added random jitter (0-10 seconds)
+      base_wait=$((15 * attempt))
+      jitter=$((RANDOM % 10))
+      wait_time=$((base_wait + jitter))
+      echo "Retry attempt $attempt for $company failed. Waiting $wait_time seconds before next attempt..."
+      sleep $wait_time
+    fi
+  done
   
   # Check if CSV was created and has content (more than just header)
   if [ -f "news-$company.csv" ] && [ $(wc -l < "news-$company.csv") -gt 1 ]; then
@@ -30,6 +45,10 @@ for company in 'Unaliwear' 'BrainCheck' 'Dermala' 'Oralucent' 'Flowly' 'Rosy Wel
     # Add a placeholder entry in aggregated CSV with date only (no time components)
     echo "\"$company\",\"$(date +%Y-%m-%d)\",\"No news\",,,," >> aggregated-news.csv
   fi
+  
+  # Add a longer delay between companies to avoid rate limiting
+  echo "Waiting 60 seconds before processing next company..."
+  sleep 60
 done
 
 # Show summary
