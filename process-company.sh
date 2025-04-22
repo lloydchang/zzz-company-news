@@ -47,8 +47,8 @@ for company in 'Unaliwear' 'BrainCheck' 'Dermala' 'Oralucent' 'Flowly' 'Rosy Wel
   fi
   
   # Add a longer delay between companies to avoid rate limiting
-  echo "Waiting 60 seconds before processing next company..."
-  sleep 60
+  # echo "Waiting 60 seconds before processing next company..."
+  # sleep 60
 done
 
 # Show summary
