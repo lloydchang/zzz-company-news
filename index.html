@@ -717,10 +717,10 @@
                         
                         let response = '';
                         if (nextArticle.full_content) {
-                            const snippet = nextArticle.full_content.substring(0, 300) + '...';
-                            response = `${snippet}`;
+                            const snippet = nextArticle.full_content.substring(0, 300);
+                            response = `${nextArticle.company}: ${snippet}`;
                         } else {
-                            response = `${nextArticle.title}. ${nextArticle.body.substring(0, 150)}...`;
+                            response = `${nextArticle.company}: ${nextArticle.title}. ${nextArticle.body.substring(0, 150)}`;
                         }
                         
                         addMessageWithCitation(response, `${nextArticle.source}`, nextArticle.url);
