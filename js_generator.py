@@ -291,7 +291,7 @@ def generate_chatbot_js():
                         if (!foundRelevantSnippet) {
                             for (const paragraph of paragraphs) {
                                 if (keywords.some(keyword => paragraph.toLowerCase().includes(keyword))) {
-                                    informativeSnippet = paragraph.trim().substring(0, 300) + '...';
+                                    informativeSnippet = paragraph.trim().substring(0, 300);
                                     foundRelevantSnippet = true;
                                     break;
                                 }
@@ -305,24 +305,24 @@ def generate_chatbot_js():
                                 const sentences = middleContent.split(/[.!?] /).filter(s => s.length > 30);
                                 
                                 if (sentences.length > 0) {
-                                    informativeSnippet = sentences[0].trim() + '...';
+                                    informativeSnippet = sentences[0].trim();
                                 } else {
-                                    informativeSnippet = fullContent.substring(0, 300) + '...';
+                                    informativeSnippet = fullContent.substring(0, 300);
                                 }
                             } else {
-                                informativeSnippet = fullContent.substring(0, 300) + '...';
+                                informativeSnippet = fullContent.substring(0, 300);
                             }
                         }
                     }
                     
                     if (lowerQuestion.includes('what') && lowerQuestion.includes('company')) {
-                        response = `Based on the news, ${mostRelevant.company} has been mentioned in relation to: "${mostRelevant.title}"`;
+                        response = `${mostRelevant.company}: Based on the news, ${mostRelevant.company} has been mentioned in relation to: "${mostRelevant.title}"`;
                     } else if (lowerQuestion.includes('latest') || lowerQuestion.includes('recent')) {
-                        response = `The latest news I found is: "${mostRelevant.title}". ${mostRelevant.body.substring(0, 150)}...`;
+                        response = `${mostRelevant.company}: The latest news I found is: "${mostRelevant.title}". ${mostRelevant.body.substring(0, 150)}`;
                     } else if (informativeSnippet) {
-                        response = `${informativeSnippet}`;
+                        response = `${mostRelevant.company}: ${informativeSnippet}`;
                     } else {
-                        response = `${mostRelevant.title} ${mostRelevant.body.substring(0, 150)}`;
+                        response = `${mostRelevant.company}: ${mostRelevant.title} ${mostRelevant.body.substring(0, 150)}`;
                     }
                     
                     addMessageWithCitation(response, `${mostRelevant.source}`, mostRelevant.url);
