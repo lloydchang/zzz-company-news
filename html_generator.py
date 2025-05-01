@@ -307,6 +307,8 @@ def generate_chatbot_html(news_data_for_js):
     return f"""
     </div>
     <p class="timestamp">Last updated: {current_date}</p>
+
+    Manually, please reload this web page by pressing Command ⌘ or CTRL + R keys if the above date appears older than a week.
     
     <!-- Chatbot UI - Added title attribute and more visible text -->
     <button class="chat-toggle-button" title="Open Chat Assistant">💬</button>
