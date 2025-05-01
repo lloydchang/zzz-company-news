@@ -8,9 +8,11 @@ for company in 'Unaliwear' 'BrainCheck' 'Dermala' 'Oralucent' 'Flowly' 'Rosy Wel
   echo "Processing $company..."
   # Check if company name contains multiple words
   if [[ "$company" == *" "* ]]; then
-    search_term="\"$company\" company"
+#    search_term="\"$company\" company"
+    search_term="\"$company\""
   else
-    search_term="$company company"
+#    search_term="$company company"
+    search_term="$company"
   fi
   
   # Normal processing with multiple retries and exponential backoff with jitter
