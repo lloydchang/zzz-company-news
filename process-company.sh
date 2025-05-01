@@ -8,9 +8,13 @@ for company in "Unaliwear" "BrainCheck" "Dermala" "Oralucent" "Flowly" "Rosy Wel
   echo "Processing $company..."
   # Check if company name contains multiple words
   if [[ "$company" == *" "* ]]; then
+# Optional:
+# Append " company" if company name is generic like Stripe, which isn't differentiated from stripe
 #    search_term="\"$company\" company"
     search_term="\"$company\""
   else
+# Optional:
+# Append " company" if company name is generic like Stripe, which isn't differentiated from stripe
 #    search_term="$company company"
     search_term="$company"
   fi
