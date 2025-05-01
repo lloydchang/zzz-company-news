@@ -4,7 +4,7 @@
 echo "company,date,title,body,url,image,source" > aggregated-news.csv
 
 # Process companies and append to CSV
-for company in 'Unaliwear' 'BrainCheck' 'Dermala' 'Oralucent' 'Flowly' 'Rosy Wellness' 'De Oro Devices' 'Partum Health' 'Fort Health' 'RubyWell' 'Atlantic Sea Farms' 'VidaFuel'; do
+for company in 'Unaliwear' 'BrainCheck' 'Dermala' 'Oralucent' 'Flowly' 'Rosy Wellness' 'De Oro Devices' 'Partum Health' 'Fort Health' 'RubyWell' 'Atlantic Sea Farms' 'VidaFuel' 'Aloqia' 'Queen of Raw' 'Refiberd' 'Jiminy\'s' 'Aeromutable'; do
   echo "Processing $company..."
   # Check if company name contains multiple words
   if [[ "$company" == *" "* ]]; then
