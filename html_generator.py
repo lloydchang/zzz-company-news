@@ -69,10 +69,10 @@ def generate_html_head_and_styles():
             margin-top: 10px;
         }
         .timestamp {
-            text-align: center;
-            color: #999;
-            font-size: 12px;
-            margin-top: 40px;
+            text-align: left;
+            color: #000000;
+            font-size: 24px;
+            margin-top: 0px;
         }
         a {
             color: #0066cc;
